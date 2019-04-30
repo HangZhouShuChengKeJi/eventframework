@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="info" packages="com.orange.commons.support.log4j2" verbose="true">
+    <Properties>
+        <Property name="logCharset">UTF-8</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} [%t] %-5p %l - %m%n" />
+        </Console>
+    </Appenders>
+    <Loggers>
+
+        <!-- 默认日志 -->
+        <Root level="INFO">
+            <AppenderRef ref="Console" />
+        </Root>
+
+        <logger name="com.orange.eventframework.console" level="DEBUG" />
+
+        <!-- rocketmq client 日志 -->
+        <logger name="RocketmqClient" level="WARN" />
+
+        <logger name="org.springframework.boot" level="INFO" />
+
+    </Loggers>
+</Configuration>

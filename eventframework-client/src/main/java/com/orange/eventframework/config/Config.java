@@ -1,0 +1,155 @@
+package com.orange.eventframework.config;
+
+/**
+ * 事件框架配置
+ *
+ * @author 小天
+ * @date 2019/3/14 10:11
+ */
+public class Config {
+
+    /**
+     * 应用名称
+     */
+    private String  appName             = "default";
+    /**
+     * 框架禁用状态（仅禁用事件信息采集）
+     */
+    private boolean disabled            = true;
+    /**
+     * rocketmq 事件信息 topic
+     */
+    private String  topic               = "ef_event";
+    /**
+     * rocketmq 事件信息生产者组Id
+     */
+    private String  groupId             = "event_framework";
+    /**
+     * rocketmq 消息队列 name server 集群地址
+     */
+    private String  nameSrvAddr         = "localhost:9876";
+
+    /**
+     * 业务数据默认的 topic
+     */
+    private String  defaultDataTopic    = "ef_data";
+    private String  defaultProducerCode = "ef_default_producer";
+    /**
+     * 最大重试消费次数
+     */
+    private int     maxReconsumeTimes   = 3;
+    /**
+     * 最小消费线程数
+     */
+    private int     consumeThreadMin    = 5;
+    /**
+     * 最大消费线程数
+     */
+    private int     consumeThreadMax    = 64;
+    /**
+     * 最大拉取数量
+     */
+    private int     pullBatchSize       = 32;
+
+    private String clientIP;
+
+
+    public Config() {
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getNameSrvAddr() {
+        return nameSrvAddr;
+    }
+
+    public void setNameSrvAddr(String nameSrvAddr) {
+        this.nameSrvAddr = nameSrvAddr;
+    }
+
+    public String getDefaultDataTopic() {
+        return defaultDataTopic;
+    }
+
+    public void setDefaultDataTopic(String defaultDataTopic) {
+        this.defaultDataTopic = defaultDataTopic;
+    }
+
+    public String getDefaultProducerCode() {
+        return defaultProducerCode;
+    }
+
+    public void setDefaultProducerCode(String defaultProducerCode) {
+        this.defaultProducerCode = defaultProducerCode;
+    }
+
+    public int getMaxReconsumeTimes() {
+        return maxReconsumeTimes;
+    }
+
+    public void setMaxReconsumeTimes(int maxReconsumeTimes) {
+        this.maxReconsumeTimes = maxReconsumeTimes;
+    }
+
+    public int getConsumeThreadMin() {
+        return consumeThreadMin;
+    }
+
+    public void setConsumeThreadMin(int consumeThreadMin) {
+        this.consumeThreadMin = consumeThreadMin;
+    }
+
+    public int getConsumeThreadMax() {
+        return consumeThreadMax;
+    }
+
+    public void setConsumeThreadMax(int consumeThreadMax) {
+        this.consumeThreadMax = consumeThreadMax;
+    }
+
+    public int getPullBatchSize() {
+        return pullBatchSize;
+    }
+
+    public void setPullBatchSize(int pullBatchSize) {
+        this.pullBatchSize = pullBatchSize;
+    }
+
+    public String getClientIP() {
+        return clientIP;
+    }
+
+    public void setClientIP(String clientIP) {
+        this.clientIP = clientIP;
+    }
+}
