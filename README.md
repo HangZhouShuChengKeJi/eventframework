@@ -5,7 +5,7 @@
 在 maven 项目中使用时，通过以下方式添加依赖：
 ```xml
     <dependency>
-        <artifactId>eventframework</artifactId>
+        <artifactId>eventframework-client</artifactId>
         <groupId>com.orange.server</groupId>
         <version>${eventframework.version}</version>
     </dependency>
