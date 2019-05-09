@@ -4,9 +4,13 @@ import com.orange.eventframework.util.NetworkUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.MessageFormatter;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -18,6 +22,8 @@ import java.util.Properties;
 public class DefaultConfigLoader implements ConfigLoader{
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private String propertiesKeyPrefix = "orange.eventframework";
 
     /**
      * properties 配置文件路径
@@ -35,59 +41,117 @@ public class DefaultConfigLoader implements ConfigLoader{
     @Override
     public Config load() {
 
-        Config config = new Config();
+        Map<String, String> settingsMap = new HashMap<>();
+
         // 加载配置
-        Properties properties = loadProperties();
-        if (properties == null || properties.isEmpty()) {
+        loadFromPropertiesFile(settingsMap);
+        loadFromSystemEnv(settingsMap);
+        loadFromSystemProperties(settingsMap);
+
+        return convertSettingsToConfig(settingsMap);
+    }
+
+    /**
+     * 将配置参数转换为 {@link Config}
+     */
+    private Config convertSettingsToConfig(Map<String, String> settingsMap) {
+        Config config = new Config();
+        if (settingsMap.isEmpty()) {
             return config;
         }
 
-        if(properties.containsKey("orange.eventframework.appName")) {
-            config.setAppName(properties.getProperty("orange.eventframework.appName"));
+        if(settingsMap.containsKey("orange.eventframework.appName")) {
+            config.setAppName(settingsMap.get("orange.eventframework.appName"));
             if (StringUtils.isBlank(config.getAppName())) {
                 config.setAppName(Config.DEFAULT_APP_NAME);
             }
         }
 
-        config.setDisabled(Boolean.parseBoolean(properties.getProperty("orange.eventframework.disabled")));
+        config.setDisabled(Boolean.parseBoolean(settingsMap.get("orange.eventframework.disabled")));
 
         // 消息队列集群地址（必选）
-        config.setNameSrvAddr(properties.getProperty("orange.eventframework.nameSrvAddr"));
+        config.setNameSrvAddr(settingsMap.get("orange.eventframework.nameSrvAddr"));
 
         //  框架采集使用的信息
-        if(properties.containsKey("orange.eventframework.topic")) {
-            config.setTopic(properties.getProperty("orange.eventframework.topic"));
+        if(settingsMap.containsKey("orange.eventframework.topic")) {
+            config.setTopic(settingsMap.get("orange.eventframework.topic"));
         }
-        if(properties.containsKey("orange.eventframework.groupId")) {
-            config.setGroupId(properties.getProperty("orange.eventframework.groupId"));
+        if(settingsMap.containsKey("orange.eventframework.groupId")) {
+            config.setGroupId(settingsMap.get("orange.eventframework.groupId"));
         }
 
         // 默认的生产者标识。如果未指定的话，使用 appName 作为标识
-        if(properties.containsKey("orange.eventframework.defaultDataTopic")) {
-            config.setDefaultDataTopic(properties.getProperty("orange.eventframework.defaultDataTopic"));
+        if(settingsMap.containsKey("orange.eventframework.defaultDataTopic")) {
+            config.setDefaultDataTopic(settingsMap.get("orange.eventframework.defaultDataTopic"));
         }
 
         // 最大重试消费次数
-        if(properties.containsKey("orange.eventframework.maxReconsumeTimes")) {
-            config.setMaxReconsumeTimes(Integer.parseInt(properties.getProperty("orange.eventframework.maxReconsumeTimes")));
+        if(settingsMap.containsKey("orange.eventframework.maxReconsumeTimes")) {
+            config.setMaxReconsumeTimes(Integer.parseInt(settingsMap.get("orange.eventframework.maxReconsumeTimes")));
         }
 
-        config.setClientIP(properties.getProperty("orange.eventframework.clientIP", NetworkUtil.getLocalIP()));
+        config.setClientIP(settingsMap.getOrDefault("orange.eventframework.clientIP", NetworkUtil.getLocalIP()));
 
         return config;
     }
 
-    private Properties loadProperties() {
+    /**
+     * 属性的 key 是否匹配
+     */
+    private boolean isKeyMatch(String key) {
+        return StringUtils.startsWith(key, propertiesKeyPrefix);
+    }
+
+    /**
+     * 从系统属性加载配置
+     */
+    private void loadFromSystemProperties(Map<String, String> settingsMap) {
+        Properties properties = System.getProperties();
+        Enumeration<Object> enumeration = properties.keys();
+        while (enumeration.hasMoreElements()) {
+            String key = (String) enumeration.nextElement();
+            if (isKeyMatch(key)) {
+                continue;
+            }
+            settingsMap.put(key, properties.getProperty(key));
+        }
+    }
+
+    /**
+     * 从系统环境变量加载配置
+     */
+    private void loadFromSystemEnv(Map<String, String> settingsMap) {
+        Map<String, String> env = System.getenv();
+        for (Map.Entry<String, String> entry : env.entrySet()) {
+            if (isKeyMatch(entry.getKey())) {
+                continue;
+            }
+            settingsMap.put(entry.getKey(), entry.getValue());
+        }
+    }
+
+    /**
+     * 加载 {@link #propertiesPath } 文件里的配置
+     */
+    private void loadFromPropertiesFile(Map<String, String> settingsMap) {
         Properties properties = null;
         try {
             InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(propertiesPath);
             if (inputStream != null) {
                 properties = new Properties();
                 properties.load(inputStream);
+                Enumeration<Object> enumeration = properties.keys();
+                while (enumeration.hasMoreElements()) {
+                    String key = (String) enumeration.nextElement();
+                    if (isKeyMatch(key)) {
+                        continue;
+                    }
+                    settingsMap.put(key, properties.getProperty(key));
+                }
             }
         } catch (IOException e) {
-            logger.warn("加载配置文件异常", e);
+            logger.warn(MessageFormatter.format("加载配置文件异常： {}", this.propertiesPath).getMessage(),
+                    e);
         }
-        return properties;
     }
 }
