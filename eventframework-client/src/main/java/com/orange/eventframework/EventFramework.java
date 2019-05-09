@@ -54,15 +54,22 @@ public final class EventFramework {
      * 初始化入口
      */
     public void init(ConfigLoader configLoader) {
+        logger.info("EventFramework init ...");
+
         // 配置文件加载
+        logger.debug("EventFramework load config ...");
         this.config = configLoader.load();
 
-        logger.debug("EventFramework 配置文件加载成功");
+        // 检查配置
+        logger.debug("EventFramework check config ...");
+        checkConfig(this.config);
 
         // 启动
+        logger.debug("EventFramework bootstrap ...");
         bootstrap();
 
         // 注册 jvm 关闭钩子
+        logger.debug("EventFramework add shutdown hook ...");
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -71,6 +78,15 @@ public final class EventFramework {
         });
 
         logger.info("EventFramework init successful");
+    }
+
+    /**
+     * 检查配置
+     */
+    private void checkConfig(Config config) {
+        if (Config.DEFAULT_APP_NAME.equals(config.getAppName())) {
+            logger.warn("正在使用默认的应用程序名称： “{}”，请注意修改", config.getAppName());
+        }
     }
 
     /**

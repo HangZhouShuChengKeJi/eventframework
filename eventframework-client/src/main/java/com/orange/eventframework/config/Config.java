@@ -8,10 +8,12 @@ package com.orange.eventframework.config;
  */
 public class Config {
 
+    public static final String DEFAULT_APP_NAME = "default";
+
     /**
      * 应用名称
      */
-    private String  appName             = "default";
+    private String  appName             = DEFAULT_APP_NAME;
     /**
      * 框架禁用状态（仅禁用事件信息采集）
      */

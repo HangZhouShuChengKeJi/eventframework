@@ -41,24 +41,36 @@ public class DefaultConfigLoader implements ConfigLoader{
         if (properties == null || properties.isEmpty()) {
             return config;
         }
-        config.setAppName(properties.getProperty("orange.eventframework.appName"));
-        if (StringUtils.equals(config.getAppName(), "default")) {
-            logger.warn("正在使用默认的应用程序名称： “{}”，请注意修改", config.getAppName());
+
+        if(properties.containsKey("orange.eventframework.appName")) {
+            config.setAppName(properties.getProperty("orange.eventframework.appName"));
+            if (StringUtils.isBlank(config.getAppName())) {
+                config.setAppName(Config.DEFAULT_APP_NAME);
+            }
         }
+
         config.setDisabled(Boolean.parseBoolean(properties.getProperty("orange.eventframework.disabled")));
 
-        //  框架采集使用的信息
-        config.setTopic(properties.getProperty("orange.eventframework.topic"));
-        config.setGroupId(properties.getProperty("orange.eventframework.groupId"));
+        // 消息队列集群地址（必选）
         config.setNameSrvAddr(properties.getProperty("orange.eventframework.nameSrvAddr"));
-        config.setDefaultDataTopic(properties.getProperty("orange.eventframework.defaultDataTopic"));
 
+        //  框架采集使用的信息
+        if(properties.containsKey("orange.eventframework.topic")) {
+            config.setTopic(properties.getProperty("orange.eventframework.topic"));
+        }
+        if(properties.containsKey("orange.eventframework.groupId")) {
+            config.setGroupId(properties.getProperty("orange.eventframework.groupId"));
+        }
 
         // 默认的生产者标识。如果未指定的话，使用 appName 作为标识
-        config.setDefaultDataTopic(properties.getProperty("orange.eventframework.defaultProducerCode", config.getAppName()));
+        if(properties.containsKey("orange.eventframework.defaultDataTopic")) {
+            config.setDefaultDataTopic(properties.getProperty("orange.eventframework.defaultDataTopic"));
+        }
 
         // 最大重试消费次数
-        config.setMaxReconsumeTimes(Integer.parseInt(properties.getProperty("orange.eventframework.maxReconsumeTimes", "3")));
+        if(properties.containsKey("orange.eventframework.maxReconsumeTimes")) {
+            config.setMaxReconsumeTimes(Integer.parseInt(properties.getProperty("orange.eventframework.maxReconsumeTimes")));
+        }
 
         config.setClientIP(properties.getProperty("orange.eventframework.clientIP", NetworkUtil.getLocalIP()));
 
