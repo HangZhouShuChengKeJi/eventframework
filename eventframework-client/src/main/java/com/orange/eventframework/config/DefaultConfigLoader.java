@@ -143,7 +143,7 @@ public class DefaultConfigLoader implements ConfigLoader{
                 Enumeration<Object> enumeration = properties.keys();
                 while (enumeration.hasMoreElements()) {
                     String key = (String) enumeration.nextElement();
-                    if (isKeyMatch(key)) {
+                    if (!isKeyMatch(key)) {
                         continue;
                     }
                     settingsMap.put(key, properties.getProperty(key));
