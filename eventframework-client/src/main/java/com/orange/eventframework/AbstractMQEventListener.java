@@ -3,6 +3,8 @@ package com.orange.eventframework;
 import com.orange.eventframework.config.Config;
 import com.orange.eventframework.message.MessageWrapper;
 import com.orange.eventframework.message.RocketMqMessageWrapper;
+import com.orange.eventframework.monitor.ExceptionMonitorData;
+import com.orange.eventframework.monitor.ExceptionMonitorEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
@@ -12,9 +14,11 @@ import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -58,6 +62,9 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
      * 是否禁用事件信息报告
      */
     private boolean disableEventInfoReport = false;
+
+    @Resource
+    private ApplicationEventPublisher eventPublisher;
 
     public AbstractMQEventListener(Collection<String> consumeEventCodeSet) {
         if (CollectionUtils.isEmpty(consumeEventCodeSet)) {
@@ -212,6 +219,14 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
             } catch (Throwable t) {
                 logger.error("", t);
                 status = ConsumeConcurrentlyStatus.RECONSUME_LATER;
+                // send exception event
+                ExceptionMonitorData exceptionMonitorData = new ExceptionMonitorData();
+                exceptionMonitorData.setException(t);
+                exceptionMonitorData.setNameSrvAddr(nameSrvAddr);
+                exceptionMonitorData.setTopic(topic);
+                exceptionMonitorData.setConsumerCode(consumerCode);
+                exceptionMonitorData.setConsumeEventCodeSet(new HashSet<>(consumeEventCodeSet));
+                eventPublisher.publishEvent(new ExceptionMonitorEvent(exceptionMonitorData));
             } finally {
                 // 上传事件信息
                 if (!this.disableEventInfoReport) {
