@@ -1,7 +1,7 @@
 package com.orange.eventframework.monitor;
 
 import com.orange.eventframework.mail.SimpleMailSupport;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;

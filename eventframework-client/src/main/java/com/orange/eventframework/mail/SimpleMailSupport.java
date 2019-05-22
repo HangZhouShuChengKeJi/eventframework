@@ -1,8 +1,10 @@
 package com.orange.eventframework.mail;
 
 import com.orange.eventframework.util.NetworkUtil;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Map;
@@ -13,6 +15,7 @@ import java.util.Map;
  */
 public class SimpleMailSupport {
 
+    private static final Logger log = LoggerFactory.getLogger(SimpleMailSupport.class);
 
     /**
      * 发送监控邮件
@@ -33,7 +36,7 @@ public class SimpleMailSupport {
             }
             builder.append("<br><b>异常堆栈：</b><br>");
             if (throwable != null) {
-                builder.append(StringUtils.replace(ExceptionUtils.getFullStackTrace(throwable), "\n", "<br>"));
+                builder.append(StringUtils.replace(ExceptionUtils.getStackTrace(throwable), "\n", "<br>"));
             }
             sendMail(mailFrom, password, mailTo, subject, builder.toString(), null);
         } catch (Throwable ignore) {
@@ -54,8 +57,24 @@ public class SimpleMailSupport {
         }
     }
 
-    private static void sendMail(String mailFrom, String password, String[] mailTo, String subject, String content, Map<String, String> files) {
-        TestMailSender.sendMail(mailFrom, password, mailTo, subject, content, files);
+    private static boolean sendMail(String mailFrom, String password, String[] mailTo, String subject, String content, Map<String, String> files) {
+        try {
+            MailSenderInfo mailInfo = new MailSenderInfo();
+            mailInfo.setValidate(true);
+            mailInfo.setUserName(mailFrom);
+            mailInfo.setPassword(password);// 您的邮箱密码
+            mailInfo.setFromAddress(mailFrom);
+            mailInfo.setToAddress(mailTo);
+            mailInfo.setSubject(subject);
+            mailInfo.setContent(content);
+            // 这个类主要来发送邮件
+            SimpleMailSender sms = new SimpleMailSender();
+            // SimpleMailSender.sendTextMail(mailInfo);// 发送文体格式
+            return sms.sendHtmlMail(mailInfo, files);// 发送html格式
+        } catch (Exception ex) {
+            log.error("", ex);
+            return false;
+        }
     }
 
 }
