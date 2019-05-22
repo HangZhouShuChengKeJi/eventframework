@@ -1,6 +1,7 @@
 package com.orange.eventframework.monitor;
 
 import com.orange.eventframework.mail.SimpleMailSupport;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -26,7 +27,7 @@ public class MailExceptionMonitorHandler extends ExceptionMonitorHandler {
 
     private String mailFrom;
     private String password;
-    private String[] mailTo;
+    private String mailTo;
 
     public void setMailFrom(String mailFrom) {
         this.mailFrom = mailFrom;
@@ -36,15 +37,18 @@ public class MailExceptionMonitorHandler extends ExceptionMonitorHandler {
         this.password = password;
     }
 
-    public void setMailTo(String[] mailTo) {
+    public void setMailTo(String mailTo) {
         this.mailTo = mailTo;
     }
 
     @Override
     protected void onExceptionMonitorEvent(ExceptionMonitorEvent exceptionMonitorEvent) {
         poolExecutor.submit(() -> {
+            if (StringUtils.isBlank(mailFrom) || StringUtils.isBlank(password) || StringUtils.isBlank(mailTo)) {
+                return;
+            }
             ExceptionMonitorData exceptionMonitorData = (ExceptionMonitorData) exceptionMonitorEvent.getSource();
-            SimpleMailSupport.sendExceptionMail(mailFrom, password, mailTo, "eventframework 事件消费异常",
+            SimpleMailSupport.sendExceptionMail(mailFrom, password, mailTo.split(","), "eventframework 事件消费异常",
                     new LinkedList<String>() {
                         {
                             add("nameServer: " + exceptionMonitorData.getNameSrvAddr() + "<br>");
