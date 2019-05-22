@@ -220,10 +220,11 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
                 logger.error("", t);
                 status = ConsumeConcurrentlyStatus.RECONSUME_LATER;
                 // send exception event
+                Config config = this.eventFramework.getConfig();
                 ExceptionMonitorData exceptionMonitorData = new ExceptionMonitorData();
                 exceptionMonitorData.setException(t);
-                exceptionMonitorData.setNameSrvAddr(nameSrvAddr);
-                exceptionMonitorData.setTopic(topic);
+                exceptionMonitorData.setNameSrvAddr(StringUtils.isBlank(nameSrvAddr) ? config.getNameSrvAddr() : nameSrvAddr);
+                exceptionMonitorData.setTopic(getTopic(null));
                 exceptionMonitorData.setConsumerCode(consumerCode);
                 exceptionMonitorData.setConsumeEventCodeSet(new HashSet<>(consumeEventCodeSet));
                 eventPublisher.publishEvent(new ExceptionMonitorEvent(exceptionMonitorData));
