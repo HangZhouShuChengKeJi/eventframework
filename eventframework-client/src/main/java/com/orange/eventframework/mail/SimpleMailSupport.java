@@ -24,7 +24,7 @@ public class SimpleMailSupport {
      * @param contents  邮件内容
      * @param throwable 异常堆栈
      */
-    public static void sendExceptionMail(String mailFrom, String password, String[] mailTo, String subject, Collection<String> contents, Throwable throwable) {
+    public static void sendExceptionMail(String stmpHost, String stmpPort, String stmpSocketFactoryPort, String mailFrom, String password, String[] mailTo, String subject, Collection<String> contents, Throwable throwable) {
         try {
             StringBuilder builder = new StringBuilder();
             builder.append("<b>服务器IP：</b>").append(NetworkUtil.getLocalIP()).append("<br>");
@@ -38,7 +38,7 @@ public class SimpleMailSupport {
             if (throwable != null) {
                 builder.append(StringUtils.replace(ExceptionUtils.getStackTrace(throwable), "\n", "<br>"));
             }
-            sendMail(mailFrom, password, mailTo, subject, builder.toString(), null);
+            sendMail(stmpHost, stmpPort, stmpSocketFactoryPort, mailFrom, password, mailTo, subject, builder.toString(), null);
         } catch (Throwable ignore) {
         }
     }
@@ -49,17 +49,20 @@ public class SimpleMailSupport {
      * @param subject 邮件主题
      * @param content 邮件内容
      */
-    public static void sendMail(String mailFrom, String password, String[] mailTo, String subject, String content) {
+    public static void sendMail(String stmpHost, String stmpPort, String stmpSocketFactoryPort, String mailFrom, String password, String[] mailTo, String subject, String content) {
         try {
-            sendMail(mailFrom, password, mailTo, subject, content, null);
+            sendMail(stmpHost, stmpPort, stmpSocketFactoryPort, mailFrom, password, mailTo, subject, content, null);
         } catch (Throwable e) {
             // ignore
         }
     }
 
-    private static boolean sendMail(String mailFrom, String password, String[] mailTo, String subject, String content, Map<String, String> files) {
+    private static boolean sendMail(String stmpHost, String stmpPort, String stmpSocketFactoryPort, String mailFrom, String password, String[] mailTo, String subject, String content, Map<String, String> files) {
         try {
             MailSenderInfo mailInfo = new MailSenderInfo();
+            mailInfo.setMailServerHost(stmpHost);
+            mailInfo.setMailServerPort(stmpPort);
+            mailInfo.setMailServerSocketFactoryPort(stmpSocketFactoryPort);
             mailInfo.setValidate(true);
             mailInfo.setUserName(mailFrom);
             mailInfo.setPassword(password);// 您的邮箱密码

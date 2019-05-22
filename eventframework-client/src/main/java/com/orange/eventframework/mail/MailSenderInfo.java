@@ -11,6 +11,7 @@ public class MailSenderInfo {
 	// 发送邮件的服务器的IP和端口
 	private String		mailServerHost;
 	private String		mailServerPort	= "25";
+	private String      mailServerSocketFactoryPort = "25";
 	// 邮件发送者的地址
 	private String		fromAddress;
 	// 邮件接收者的地址
@@ -44,17 +45,15 @@ public class MailSenderInfo {
 			p.put("mail.smtp.host", "smtp.sohu.com");
 		} else if (fromAddress.toLowerCase().endsWith("tom.com")) {
 			p.put("mail.smtp.host", "smtp.tom.com");
-		} else if (fromAddress.toLowerCase().endsWith("91chengguo.com")) {
-			Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-			String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
-			p.put("mail.smtp.host", "smtp.exmail.qq.com");
-			p.setProperty("mail.smtp.socketFactory.class", SSL_FACTORY);
-			p.setProperty("mail.smtp.socketFactory.fallback", "false");
-			p.setProperty("mail.smtp.port", "465");
-			p.setProperty("mail.smtp.socketFactory.port", "465");
-			p.put("mail.smtp.auth", "true");
+		} else {
+			p.put("mail.smtp.host", this.mailServerHost);
 		}
+		Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+		String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
+		p.put("mail.smtp.socketFactory.class", SSL_FACTORY);
+		p.put("mail.smtp.socketFactory.fallback", "false");
 		p.put("mail.smtp.port", this.mailServerPort);
+		p.put("mail.smtp.socketFactory.port", this.mailServerSocketFactoryPort);
 		p.put("mail.smtp.auth", validate ? "true" : "false");
 		return p;
 	}
@@ -137,5 +136,13 @@ public class MailSenderInfo {
 
 	public void setContent(String textContent) {
 		this.content = textContent;
+	}
+
+	public String getMailServerSocketFactoryPort() {
+		return mailServerSocketFactoryPort;
+	}
+
+	public void setMailServerSocketFactoryPort(String mailServerSocketFactoryPort) {
+		this.mailServerSocketFactoryPort = mailServerSocketFactoryPort;
 	}
 }

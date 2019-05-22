@@ -28,6 +28,9 @@ public class MailExceptionMonitorHandler extends ExceptionMonitorHandler {
     private String mailFrom;
     private String password;
     private String mailTo;
+    private String stmpHost;
+    private String stmpPort;
+    private String stmpSocketFactoryPort;
 
     public void setMailFrom(String mailFrom) {
         this.mailFrom = mailFrom;
@@ -41,14 +44,30 @@ public class MailExceptionMonitorHandler extends ExceptionMonitorHandler {
         this.mailTo = mailTo;
     }
 
+    public void setStmpHost(String stmpHost) {
+        this.stmpHost = stmpHost;
+    }
+
+    public void setStmpPort(String stmpPort) {
+        this.stmpPort = stmpPort;
+    }
+
+    public void setStmpSocketFactoryPort(String stmpSocketFactoryPort) {
+        this.stmpSocketFactoryPort = stmpSocketFactoryPort;
+    }
+
     @Override
     protected void onExceptionMonitorEvent(ExceptionMonitorEvent exceptionMonitorEvent) {
         poolExecutor.submit(() -> {
-            if (StringUtils.isBlank(mailFrom) || StringUtils.isBlank(password) || StringUtils.isBlank(mailTo)) {
+            if (StringUtils.isBlank(mailFrom)
+                    || StringUtils.isBlank(password)
+                    || StringUtils.isBlank(mailTo)
+                    || StringUtils.isBlank(stmpHost)
+                    || StringUtils.isBlank(stmpPort)) {
                 return;
             }
             ExceptionMonitorData exceptionMonitorData = (ExceptionMonitorData) exceptionMonitorEvent.getSource();
-            SimpleMailSupport.sendExceptionMail(mailFrom, password, mailTo.split(","), "eventframework 事件消费异常",
+            SimpleMailSupport.sendExceptionMail(stmpHost, stmpPort, stmpSocketFactoryPort, mailFrom, password, mailTo.split(","), "eventframework 事件消费异常",
                     new LinkedList<String>() {
                         {
                             add("nameServer: " + exceptionMonitorData.getNameSrvAddr() + "<br>");
