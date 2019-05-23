@@ -31,6 +31,7 @@ public class MailExceptionMonitorHandler extends ExceptionMonitorHandler {
     private String stmpHost;
     private String stmpPort;
     private String stmpSocketFactoryPort;
+    private String validate = "true";
 
     public void setMailFrom(String mailFrom) {
         this.mailFrom = mailFrom;
@@ -56,6 +57,10 @@ public class MailExceptionMonitorHandler extends ExceptionMonitorHandler {
         this.stmpSocketFactoryPort = stmpSocketFactoryPort;
     }
 
+    public void setValidate(String validate) {
+        this.validate = validate;
+    }
+
     @Override
     protected void onExceptionMonitorEvent(ExceptionMonitorEvent exceptionMonitorEvent) {
         poolExecutor.submit(() -> {
@@ -67,7 +72,7 @@ public class MailExceptionMonitorHandler extends ExceptionMonitorHandler {
                 return;
             }
             ExceptionMonitorData exceptionMonitorData = (ExceptionMonitorData) exceptionMonitorEvent.getSource();
-            SimpleMailSupport.sendExceptionMail(stmpHost, stmpPort, stmpSocketFactoryPort, mailFrom, password, mailTo.split(","), "eventframework 事件消费异常",
+            SimpleMailSupport.sendExceptionMail(stmpHost, stmpPort, stmpSocketFactoryPort, Boolean.parseBoolean(validate), mailFrom, password, mailTo.split(","), "eventframework 事件消费异常",
                     new LinkedList<String>() {
                         {
                             add("nameServer: " + exceptionMonitorData.getNameSrvAddr() + "<br>");
