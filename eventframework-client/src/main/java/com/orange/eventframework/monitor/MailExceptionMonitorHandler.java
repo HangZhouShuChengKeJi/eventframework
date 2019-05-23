@@ -31,7 +31,7 @@ public class MailExceptionMonitorHandler extends ExceptionMonitorHandler {
     private String stmpHost;
     private String stmpPort;
     private String stmpSocketFactoryPort;
-    private String validate = "true";
+    private String validate = "false";
 
     public void setMailFrom(String mailFrom) {
         this.mailFrom = mailFrom;
