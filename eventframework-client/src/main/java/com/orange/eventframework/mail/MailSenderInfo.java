@@ -27,6 +27,8 @@ public class MailSenderInfo {
 	private String		content;
 	// 邮件附件的文件名
 	private String[]	attachFileNames;
+	// 发件人
+	private String      senderName;
 
 	/**
 	 * 获得邮件会话属性
@@ -144,5 +146,13 @@ public class MailSenderInfo {
 
 	public void setMailServerSocketFactoryPort(String mailServerSocketFactoryPort) {
 		this.mailServerSocketFactoryPort = mailServerSocketFactoryPort;
+	}
+
+	public String getSenderName() {
+		return senderName;
+	}
+
+	public void setSenderName(String senderName) {
+		this.senderName = senderName;
 	}
 }
