@@ -132,6 +132,7 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
         this.dataConsumer.setNamesrvAddr(nameSrvAddr);
         // 设置客户端IP
         this.dataConsumer.setClientIP(config.getClientIP());
+        this.dataConsumer.setInstanceName(config.getAppName());
         this.dataConsumer.setMaxReconsumeTimes(config.getMaxReconsumeTimes());
         this.dataConsumer.setConsumeThreadMax(config.getConsumeThreadMax());
         this.dataConsumer.setConsumeThreadMin(config.getConsumeThreadMin());
