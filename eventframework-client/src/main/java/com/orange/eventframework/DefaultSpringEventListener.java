@@ -129,6 +129,7 @@ public class DefaultSpringEventListener implements SmartApplicationListener, Sma
     @Override
     public void stop() {
         if (this.dataProducer != null) {
+            logger.warn("停止 RocketMQ 生产者：{}", getClass().getSimpleName());
             this.dataProducer.shutdown();
             this.dataProducer = null;
         }

@@ -177,6 +177,7 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
     @Override
     public void stop() {
         if (this.dataConsumer != null) {
+            logger.warn("停止 RocketMQ 消费者：{}", getClass().getSimpleName());
             this.dataConsumer.shutdown();
             this.dataConsumer = null;
         }
