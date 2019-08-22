@@ -4,12 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.4.RELEASE</version>
-    </parent>
-
+    <groupId>com.orange.server</groupId>
     <artifactId>eventframework-console</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
@@ -29,6 +24,7 @@
         <!-- 该模块禁止部署到远程 maven 仓库 -->
         <maven.deploy.skip>true</maven.deploy.skip>
 
+        <spring-boot.version>2.1.7.RELEASE</spring-boot.version>
         <log4j.version>2.11.1</log4j.version>
 
     </properties>
@@ -64,6 +60,15 @@
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpmime</artifactId>
                 <version>4.5.8</version>
+            </dependency>
+
+            <!-- Spring Boot -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -154,7 +159,7 @@
         <dependency>
             <groupId>com.orange.server</groupId>
             <artifactId>eventframework-client</artifactId>
-            <version>0.3.0-SNAPSHOT</version>
+            <version>0.4.0-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>
@@ -322,6 +327,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
                 <configuration>
                     <fork>true</fork>
                 </configuration>
