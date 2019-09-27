@@ -1,7 +1,7 @@
 package com.orange.eventframework;
 
 /**
- * 常亮定义
+ * 常量定义
  *
  * @author 小天
  * @date 2019/3/13 17:05
