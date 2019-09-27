@@ -1,14 +1,20 @@
 # eventframework
 基于 [RocketMQ](http://rocketmq.apache.org/) 的事件框架
 
-# 使用
-在 maven 项目中使用时，通过以下方式添加依赖：
+# 依赖
 ```xml
     <dependency>
         <artifactId>eventframework-client</artifactId>
         <groupId>com.orange.server</groupId>
         <version>${eventframework.version}</version>
     </dependency>
+```
+
+# 使用
+在 spring 容器中注册监听器：
+```xml
+    <!-- 注册事件框架监听 spring 事件 -->
+    <bean class="com.orange.eventframework.DefaultSpringEventListener" />
 ```
 
 # 配置参数说明
