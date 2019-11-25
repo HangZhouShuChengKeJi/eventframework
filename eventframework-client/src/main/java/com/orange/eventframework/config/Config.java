@@ -13,47 +13,65 @@ public class Config {
     /**
      * 应用名称
      */
-    private String  appName             = DEFAULT_APP_NAME;
+    private String  appName     = DEFAULT_APP_NAME;
     /**
      * 框架禁用状态（仅禁用事件信息采集）
      */
-    private boolean disabled            = true;
+    private boolean disabled    = true;
     /**
      * rocketmq 事件信息 topic
      */
-    private String  topic               = "ef_event";
+    private String  topic       = "ef_event";
     /**
      * rocketmq 事件信息生产者组Id
      */
-    private String  groupId             = "event_framework";
+    private String  groupId     = "event_framework";
     /**
      * rocketmq 消息队列 name server 集群地址
      */
-    private String  nameSrvAddr         = "localhost:9876";
+    private String  nameSrvAddr = "localhost:9876";
 
     /**
      * 业务数据默认的 topic
      */
-    private String  defaultDataTopic    = "ef_data";
-    private String  defaultProducerCode = "ef_default_producer";
+    private String  defaultDataTopic                 = "ef_data";
+    private String  defaultProducerCode              = "ef_default_producer";
     /**
      * 最大重试消费次数
      */
-    private int     maxReconsumeTimes   = 3;
+    private int     maxReconsumeTimes                = 3;
     /**
      * 最小消费线程数
      */
-    private int     consumeThreadMin    = 5;
+    private int     consumeThreadMin                 = 5;
     /**
      * 最大消费线程数
      */
-    private int     consumeThreadMax    = 64;
+    private int     consumeThreadMax                 = 64;
     /**
      * 最大拉取数量
      */
-    private int     pullBatchSize       = 32;
-
-    private String clientIP;
+    private int     pullBatchSize                    = 32;
+    /**
+     * 消息发送超时时间
+     */
+    private int     sendMsgTimeout                   = 3000;
+    /**
+     * 同步模式下，消息发送失败重试次数
+     */
+    private int     retryTimesWhenSendFailed         = 2;
+    /**
+     * 异步模式下，消息发送失败重试次数
+     */
+    private int     retryTimesWhenSendAsyncFailed    = 2;
+    /**
+     * 内部发送失败时，重试另一个 broker
+     */
+    private boolean retryAnotherBrokerWhenNotStoreOK = false;
+    /**
+     * 客户端 IP
+     */
+    private String  clientIP                         = System.getProperty("ef.host.ip", System.getenv("EF_HOST_IP"));
 
 
     public Config() {
@@ -153,5 +171,37 @@ public class Config {
 
     public void setClientIP(String clientIP) {
         this.clientIP = clientIP;
+    }
+
+    public int getSendMsgTimeout() {
+        return sendMsgTimeout;
+    }
+
+    public void setSendMsgTimeout(int sendMsgTimeout) {
+        this.sendMsgTimeout = sendMsgTimeout;
+    }
+
+    public int getRetryTimesWhenSendFailed() {
+        return retryTimesWhenSendFailed;
+    }
+
+    public void setRetryTimesWhenSendFailed(int retryTimesWhenSendFailed) {
+        this.retryTimesWhenSendFailed = retryTimesWhenSendFailed;
+    }
+
+    public int getRetryTimesWhenSendAsyncFailed() {
+        return retryTimesWhenSendAsyncFailed;
+    }
+
+    public void setRetryTimesWhenSendAsyncFailed(int retryTimesWhenSendAsyncFailed) {
+        this.retryTimesWhenSendAsyncFailed = retryTimesWhenSendAsyncFailed;
+    }
+
+    public boolean isRetryAnotherBrokerWhenNotStoreOK() {
+        return retryAnotherBrokerWhenNotStoreOK;
+    }
+
+    public void setRetryAnotherBrokerWhenNotStoreOK(boolean retryAnotherBrokerWhenNotStoreOK) {
+        this.retryAnotherBrokerWhenNotStoreOK = retryAnotherBrokerWhenNotStoreOK;
     }
 }

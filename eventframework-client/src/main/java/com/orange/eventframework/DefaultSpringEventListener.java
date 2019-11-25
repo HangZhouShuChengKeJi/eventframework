@@ -116,8 +116,10 @@ public class DefaultSpringEventListener implements SmartApplicationListener, Sma
 
         this.dataProducer = new DefaultMQProducer(this.producerCode);
         this.dataProducer.setNamesrvAddr(this.nameSrvAddr);
-        this.dataProducer.setRetryTimesWhenSendAsyncFailed(1);
-        this.dataProducer.setRetryTimesWhenSendFailed(0);
+        this.dataProducer.setSendMsgTimeout(config.getSendMsgTimeout());
+        this.dataProducer.setRetryTimesWhenSendFailed(config.getRetryTimesWhenSendFailed());
+        this.dataProducer.setRetryTimesWhenSendAsyncFailed(config.getRetryTimesWhenSendAsyncFailed());
+        this.dataProducer.setRetryAnotherBrokerWhenNotStoreOK(config.isRetryAnotherBrokerWhenNotStoreOK());
         try {
             this.dataProducer.start();
         } catch (MQClientException e) {

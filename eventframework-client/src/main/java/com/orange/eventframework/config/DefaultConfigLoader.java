@@ -89,8 +89,32 @@ public class DefaultConfigLoader implements ConfigLoader{
         if(settingsMap.containsKey("orange.eventframework.maxReconsumeTimes")) {
             config.setMaxReconsumeTimes(Integer.parseInt(settingsMap.get("orange.eventframework.maxReconsumeTimes")));
         }
+        if(settingsMap.containsKey("orange.eventframework.consumeThreadMin")) {
+            config.setConsumeThreadMin(Integer.parseInt(settingsMap.get("orange.eventframework.consumeThreadMin")));
+        }
+        if(settingsMap.containsKey("orange.eventframework.consumeThreadMax")) {
+            config.setConsumeThreadMax(Integer.parseInt(settingsMap.get("orange.eventframework.consumeThreadMax")));
+        }
+        if(settingsMap.containsKey("orange.eventframework.pullBatchSize")) {
+            config.setPullBatchSize(Integer.parseInt(settingsMap.get("orange.eventframework.pullBatchSize")));
+        }
 
-        config.setClientIP(settingsMap.getOrDefault("orange.eventframework.clientIP", NetworkUtil.getLocalIP()));
+        if(settingsMap.containsKey("orange.eventframework.sendMsgTimeout")) {
+            config.setSendMsgTimeout(Integer.parseInt(settingsMap.get("orange.eventframework.sendMsgTimeout")));
+        }
+        if(settingsMap.containsKey("orange.eventframework.retryTimesWhenSendFailed")) {
+            config.setRetryTimesWhenSendFailed(Integer.parseInt(settingsMap.get("orange.eventframework.retryTimesWhenSendFailed")));
+        }
+        if(settingsMap.containsKey("orange.eventframework.retryTimesWhenSendAsyncFailed")) {
+            config.setRetryTimesWhenSendAsyncFailed(Integer.parseInt(settingsMap.get("orange.eventframework.retryTimesWhenSendAsyncFailed")));
+        }
+        if(settingsMap.containsKey("orange.eventframework.retryAnotherBrokerWhenNotStoreOK")) {
+            config.setRetryAnotherBrokerWhenNotStoreOK(Boolean.parseBoolean(settingsMap.get("orange.eventframework.retryAnotherBrokerWhenNotStoreOK")));
+        }
+
+        if (config.getClientIP() == null) {
+            config.setClientIP(NetworkUtil.getLocalIP());
+        }
 
         return config;
     }
