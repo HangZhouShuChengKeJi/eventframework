@@ -1,6 +1,5 @@
 package com.orange.eventframework.console.service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.orange.eventframework.console.entity.EventRelation;
 import com.orange.eventframework.eventinfo.ConsumeEventInfo;
 import com.orange.eventframework.eventinfo.ProduceEventInfo;
@@ -13,11 +12,11 @@ import java.util.List;
  */
 public interface EventRelationService {
 
-    void save(EventRelation eventRelation);
+    boolean save(EventRelation eventRelation);
 
-    void save(ProduceEventInfo eventInfo);
+    boolean save(ProduceEventInfo eventInfo);
 
-    void save(ConsumeEventInfo eventInfo);
+    boolean save(ConsumeEventInfo eventInfo);
 
     List<EventRelation> listAll();
 }

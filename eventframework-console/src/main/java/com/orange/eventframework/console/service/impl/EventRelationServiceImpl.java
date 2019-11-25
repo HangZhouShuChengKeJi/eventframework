@@ -2,22 +2,31 @@ package com.orange.eventframework.console.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.orange.commons.support.elasticsearch.ESHelper;
 import com.orange.eventframework.console.entity.EventRelation;
 import com.orange.eventframework.console.service.EventRelationService;
 import com.orange.eventframework.eventinfo.ConsumeEventInfo;
 import com.orange.eventframework.eventinfo.ProduceEventInfo;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.collections4.CollectionUtils;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Collections;
+import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author 小天
@@ -27,7 +36,7 @@ import java.util.stream.Collectors;
 public class EventRelationServiceImpl implements EventRelationService {
 
     @Resource
-    private ESHelper esHelper;
+    private RestHighLevelClient esClient;
 
     @Value("${eventframework.elastic.event.index}")
     public String eventIndex;
@@ -42,30 +51,78 @@ public class EventRelationServiceImpl implements EventRelationService {
     private String eventRelationType;
 
     @Override
-    public void save(EventRelation eventRelation) {
+    public boolean save(EventRelation eventRelation) {
         String eventRelationJson = JSON.toJSONString(eventRelation);
-
-        esHelper.save(eventRelationIndex, eventRelationType, DigestUtils.md5Hex(eventRelationJson), eventRelationJson);
-
+        try {
+            IndexResponse response = esClient.index(new IndexRequest(eventIndex).source(eventRelationJson, XContentType.JSON).id(DigestUtils.md5Hex(eventRelationJson)), RequestOptions.DEFAULT);
+            switch (response.getResult()) {
+                case CREATED:
+                case UPDATED:
+                    return true;
+                default:
+                    return false;
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public void save(ProduceEventInfo eventInfo) {
-        esHelper.save(eventIndex, eventType, null, JSON.toJSONString(eventInfo));
+    public boolean save(ProduceEventInfo eventInfo) {
+        try {
+            IndexResponse response = esClient.index(new IndexRequest(eventIndex).source(JSON.toJSONString(eventInfo), XContentType.JSON), RequestOptions.DEFAULT);
+            switch (response.getResult()) {
+                case CREATED:
+                case UPDATED:
+                    return true;
+                default:
+                    return false;
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public void save(ConsumeEventInfo eventInfo) {
-        esHelper.save(eventIndex, eventType, null, JSON.toJSONString(eventInfo));
+    public boolean save(ConsumeEventInfo eventInfo) {
+        try {
+            IndexResponse response = esClient.index(new IndexRequest(eventIndex).source(JSON.toJSONString(eventInfo), XContentType.JSON), RequestOptions.DEFAULT);
+            switch (response.getResult()) {
+                case CREATED:
+                case UPDATED:
+                    return true;
+                default:
+                    return false;
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public List<EventRelation> listAll() {
-        List<Map<String, Object>> searchResponse = esHelper.searchSourceMapList(eventRelationIndex, QueryBuilders.existsQuery("eventCode"), 0, 1000, 10 * 1000);
 
-        if (CollectionUtils.isEmpty(searchResponse)) {
-            return Collections.emptyList();
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(QueryBuilders.existsQuery("eventCode"));
+        searchSourceBuilder.from(0);
+        searchSourceBuilder.size(10000);
+
+        // 搜索超时时间
+        searchSourceBuilder.timeout(new TimeValue(10 * 1000, TimeUnit.MILLISECONDS));
+
+        try {
+            SearchRequest searchRequest = new SearchRequest(eventRelationIndex);
+            searchRequest.source(searchSourceBuilder);
+            SearchResponse searchResponse = esClient.search(searchRequest, RequestOptions.DEFAULT);
+            SearchHits searchHits = searchResponse.getHits();
+            List<EventRelation> list = new LinkedList<>();
+            SearchHit[] searchHitArr = searchHits.getHits();
+            for (SearchHit searchHit : searchHitArr) {
+                list.add(new JSONObject(searchHit.getSourceAsMap()).toJavaObject(EventRelation.class));
+            }
+            return list;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return searchResponse.stream().map(i -> new JSONObject(i).toJavaObject(EventRelation.class)).collect(Collectors.toList());
     }
 }
