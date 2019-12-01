@@ -51,6 +51,22 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
      * 消费的事件标识
      */
     private Set<String> consumeEventCodeSet;
+    /**
+     * 最大重试消费次数
+     */
+    private Integer     maxReconsumeTimes;
+    /**
+     * 最小消费线程数
+     */
+    private Integer     consumeThreadMin;
+    /**
+     * 最大消费线程数
+     */
+    private Integer     consumeThreadMax;
+    /**
+     * 每批次最大拉取数量
+     */
+    private Integer     pullBatchSize;
 
     private EventFramework eventFramework;
 
@@ -66,12 +82,31 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
     @Resource
     private ApplicationEventPublisher eventPublisher;
 
+    /**
+     * @param consumeEventCodeSet 消费的事件集合
+     */
     public AbstractMQEventListener(Collection<String> consumeEventCodeSet) {
+        this(consumeEventCodeSet, null, null, null, null);
+    }
+
+    /**
+     * @param consumeEventCodeSet 消费的事件集合
+     * @param maxReconsumeTimes   最大重试消费次数
+     * @param consumeThreadMin    最小消费线程数
+     * @param consumeThreadMax    最大消费线程数
+     * @param pullBatchSize       每批次最大拉取数量
+     */
+    public AbstractMQEventListener(Collection<String> consumeEventCodeSet, Integer maxReconsumeTimes, Integer consumeThreadMin, Integer consumeThreadMax, Integer pullBatchSize) {
         if (CollectionUtils.isEmpty(consumeEventCodeSet)) {
             throw new NullPointerException("consumeEventCodeSet 不能为空");
         }
         this.consumeEventCodeSet = new HashSet<>();
         this.consumeEventCodeSet.addAll(consumeEventCodeSet);
+
+        this.maxReconsumeTimes = maxReconsumeTimes;
+        this.consumeThreadMin = consumeThreadMin;
+        this.consumeThreadMax = consumeThreadMax;
+        this.pullBatchSize = pullBatchSize;
     }
 
     public void setDisableEventInfoReport(boolean disableEventInfoReport) {
@@ -90,9 +125,24 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
         this.consumerCode = consumerCode;
     }
 
+    public Integer getMaxReconsumeTimes() {
+        return maxReconsumeTimes;
+    }
+
+    public Integer getConsumeThreadMin() {
+        return consumeThreadMin;
+    }
+
+    public Integer getConsumeThreadMax() {
+        return consumeThreadMax;
+    }
+
+    public Integer getPullBatchSize() {
+        return pullBatchSize;
+    }
+
     @Override
     public void start() {
-
         if (this.disableEventInfoReport) {
             logger.debug("禁用事件上报");
         }
@@ -103,7 +153,21 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
             this.disableEventInfoReport = true;
         }
 
+        // 获取全局配置
         Config config = this.eventFramework.getConfig();
+
+        if (this.maxReconsumeTimes == null) {
+            this.maxReconsumeTimes = config.getMaxReconsumeTimes();
+        }
+        if (this.consumeThreadMax == null) {
+            this.consumeThreadMax = config.getConsumeThreadMax();
+        }
+        if (this.consumeThreadMin == null) {
+            this.consumeThreadMin = config.getConsumeThreadMin();
+        }
+        if (this.pullBatchSize == null) {
+            this.pullBatchSize = config.getPullBatchSize();
+        }
 
         // todo 从配置中心拉取消费的队列信息
         String nameSrvAddr = this.nameSrvAddr;
@@ -132,11 +196,11 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
         this.dataConsumer.setNamesrvAddr(nameSrvAddr);
         // 设置客户端IP
         this.dataConsumer.setClientIP(config.getClientIP());
-        this.dataConsumer.setMaxReconsumeTimes(config.getMaxReconsumeTimes());
-        this.dataConsumer.setConsumeThreadMax(config.getConsumeThreadMax());
-        this.dataConsumer.setConsumeThreadMin(config.getConsumeThreadMin());
+        this.dataConsumer.setMaxReconsumeTimes(this.maxReconsumeTimes);
+        this.dataConsumer.setConsumeThreadMax(this.consumeThreadMax);
+        this.dataConsumer.setConsumeThreadMin(this.consumeThreadMin);
         // 每次拉取的消息数量
-        this.dataConsumer.setPullBatchSize(config.getPullBatchSize());
+        this.dataConsumer.setPullBatchSize(this.pullBatchSize);
 
         // 将 tag 按照 topic 分组后订阅
         this.consumeEventCodeSet.stream().collect(Collectors.groupingBy(this::getTopic)).forEach((key, value) -> {
@@ -164,7 +228,6 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
      * 根据“事件标识”获取 topic
      *
      * @param eventCode 事件标识
-     *
      * @return topic
      */
     private String getTopic(String eventCode) {
@@ -245,7 +308,6 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
      * 消费信息
      *
      * @param message 消息 {@link MessageWrapper}
-     *
      * @return 消费结果 {@link ConsumeConcurrentlyStatus}
      */
     public abstract ConsumeStatus consumeMessage(MessageWrapper message);
