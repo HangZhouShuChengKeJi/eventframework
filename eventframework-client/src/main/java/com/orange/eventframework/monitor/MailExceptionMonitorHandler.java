@@ -28,10 +28,10 @@ public class MailExceptionMonitorHandler extends ExceptionMonitorHandler {
     private String mailFrom;
     private String password;
     private String mailTo;
-    private String stmpHost;
-    private String stmpPort;
-    private String stmpSocketFactoryPort;
-    private String validate = "false";
+    private String smtpHost;
+    private String smtpPort;
+    private String smtpSocketFactoryPort;
+    private boolean validate = false;
     private String senderName;
 
     public void setMailFrom(String mailFrom) {
@@ -46,19 +46,19 @@ public class MailExceptionMonitorHandler extends ExceptionMonitorHandler {
         this.mailTo = mailTo;
     }
 
-    public void setStmpHost(String stmpHost) {
-        this.stmpHost = stmpHost;
+    public void setSmtpHost(String smtpHost) {
+        this.smtpHost = smtpHost;
     }
 
-    public void setStmpPort(String stmpPort) {
-        this.stmpPort = stmpPort;
+    public void setSmtpPort(String smtpPort) {
+        this.smtpPort = smtpPort;
     }
 
-    public void setStmpSocketFactoryPort(String stmpSocketFactoryPort) {
-        this.stmpSocketFactoryPort = stmpSocketFactoryPort;
+    public void setSmtpSocketFactoryPort(String smtpSocketFactoryPort) {
+        this.smtpSocketFactoryPort = smtpSocketFactoryPort;
     }
 
-    public void setValidate(String validate) {
+    public void setValidate(boolean validate) {
         this.validate = validate;
     }
 
@@ -72,12 +72,12 @@ public class MailExceptionMonitorHandler extends ExceptionMonitorHandler {
             if (StringUtils.isBlank(mailFrom)
                     || StringUtils.isBlank(password)
                     || StringUtils.isBlank(mailTo)
-                    || StringUtils.isBlank(stmpHost)
-                    || StringUtils.isBlank(stmpPort)) {
+                    || StringUtils.isBlank(smtpHost)
+                    || StringUtils.isBlank(smtpPort)) {
                 return;
             }
             ExceptionMonitorData exceptionMonitorData = (ExceptionMonitorData) exceptionMonitorEvent.getSource();
-            SimpleMailSupport.sendExceptionMail(stmpHost, stmpPort, stmpSocketFactoryPort, senderName, Boolean.parseBoolean(validate), mailFrom, password, mailTo.split(","), "eventframework 事件消费异常",
+            SimpleMailSupport.sendExceptionMail(smtpHost, smtpPort, smtpSocketFactoryPort, senderName, validate, mailFrom, password, mailTo.split(","), "eventframework 事件消费异常",
                     new LinkedList<String>() {
                         {
                             add("nameServer: " + exceptionMonitorData.getNameSrvAddr() + "<br>");

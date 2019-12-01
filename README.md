@@ -13,8 +13,26 @@
 # 使用
 在 spring 容器中注册监听器：
 ```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
     <!-- 注册事件框架监听 spring 事件 -->
     <bean class="com.orange.eventframework.DefaultSpringEventListener" />
+
+    <!-- 配置消费异常报警 -->
+    <bean class="com.orange.eventframework.monitor.MailExceptionMonitorHandler">
+        <property name="mailFrom" value="${ef.monitor.mail.from}"/>
+        <property name="password" value="${ef.monitor.mail.password}"/>
+        <property name="mailTo" value="${ef.monitor.mail.to}"/>
+        <property name="smtpHost" value="${ef.monitor.mail.smtp.host}"/>
+        <property name="smtpPort" value="${ef.monitor.mail.smtp.port}"/>
+        <property name="smtpSocketFactoryPort" value="${ef.monitor.mail.smtp.socketFactoryPort}"/>
+        <property name="validate" value="true"/>
+    </bean>
+</beans>
 ```
 
 # 配置参数说明
