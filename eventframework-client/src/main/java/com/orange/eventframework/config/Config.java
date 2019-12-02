@@ -43,15 +43,15 @@ public class Config {
     /**
      * 最小消费线程数
      */
-    private int     consumeThreadMin                 = 5;
+    private int     consumeThreadMin                 = 1;
     /**
      * 最大消费线程数
      */
-    private int     consumeThreadMax                 = 64;
+    private int     consumeThreadMax                 = 5;
     /**
      * 最大拉取数量
      */
-    private int     pullBatchSize                    = 32;
+    private int     pullBatchSize                    = 10;
     /**
      * 消息发送超时时间
      */

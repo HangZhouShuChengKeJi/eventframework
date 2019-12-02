@@ -36,10 +36,16 @@
 ```
 
 # 配置参数说明
+支持以下三种方式配置参数，优先级高的配置会覆盖优先级低的配置：
++ `resources` 目录下的 `orange.eventframework.properties` 文件，优先级最低。
++ 环境变量，优先级第二。
++ 系统属性，优先级最高。（通过 `-D` 参数指定）
+
+配置内容及默认值如下：
 ```ini
 
 # 应用名称（必填项）
-orange.eventframework.appName=eventframework_console
+orange.eventframework.appName=default
 
 # 消息队列服务地址（必填项）
 orange.eventframework.nameSrvAddr=localhost:9876
@@ -64,11 +70,11 @@ orange.eventframework.defaultDataTopic=ef_data
 # 最大消费次数（根据需要调整）
 orange.eventframework.maxReconsumeTimes=3
 # 消费线程数最小值
-orange.eventframework.consumeThreadMin=5
+orange.eventframework.consumeThreadMin=1
 # 消费线程数最大值
-orange.eventframework.consumeThreadMax=64
+orange.eventframework.consumeThreadMax=5
 # 最大拉取数量
-orange.eventframework.pullBatchSize=32
+orange.eventframework.pullBatchSize=10
 
 
 #### RocketMQ 客户端生产者配置 #####
@@ -82,6 +88,19 @@ orange.eventframework.retryTimesWhenSendAsyncFailed=2
 # 内部发送失败时，重试另一个 broker
 orange.eventframework.retryAnotherBrokerWhenNotStoreOK=false
 
+```
+
+## 关于宿主机IP
+**宿主机IP** 属性用于向 RocketMQ 汇报本机IP。首先取 `ef.host.ip` 属性作为宿主机IP；如果取不到，则去取 `EF_HOST_IP` 环境变量；否则会读取第一块网卡的IP作为宿主机IP。
+
+通过 `ef.host.ip` 系统属性指定宿主机IP：
+```bash
+java -Def.host.ip=192.168.1.100 -jar demo.jar
+```
+
+通过 `EF_HOST_IP` 环境变量指定宿主机IP：
+```bash
+export EF_HOST_IP=192.168.1.100
 ```
 
 # 版权
