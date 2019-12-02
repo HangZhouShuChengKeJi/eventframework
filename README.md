@@ -1,16 +1,17 @@
 # eventframework
-基于 [RocketMQ](http://rocketmq.apache.org/) 的事件框架
-
-# 依赖
-```xml
-    <dependency>
-        <artifactId>eventframework-client</artifactId>
-        <groupId>com.orange.server</groupId>
-        <version>${eventframework.version}</version>
-    </dependency>
-```
+基于 [RocketMQ](http://rocketmq.apache.org/) 的事件框架，提供简便的方式将普通 spring 事件发送到 `RocketMQ` 消息队列。并提供事件间关系、事件生产和事件消费关系视图。
 
 # 使用
+## eventframework-client 使用
+引入依赖：
+```xml
+<dependency>
+    <artifactId>eventframework-client</artifactId>
+    <groupId>com.orange.server</groupId>
+    <version>1.0.1-SNAPSHOT</version>
+</dependency>
+```
+
 在 spring 容器中注册监听器：
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -34,6 +35,63 @@
     </bean>
 </beans>
 ```
+
+创建事件：
+```java
+/**
+* 通过继承 AbstractEvent 即可创建一个异步事件
+*/
+public class DemoEvent extends AbstractEvent {
+
+    private String id;
+
+    public DemoEvent(String id) {
+        this.id = id;
+    }
+
+    public DemoEvent() {
+    }
+
+    @Override
+    public boolean enablePushToMQ() {
+        // true： 允许将该事件发送是的消息队列
+        return true;
+    }
+
+    @Override
+    public String key() {
+        // 返回一个 key，便于搜索该消息
+        return id;
+    }
+}
+```
+
+发布事件：
+```java
+@Service
+public class DemoEventService {
+
+    @Resource
+    private ApplicationEventPublisher eventPublisher;
+
+    public void publishEvent(String id) {
+        // 通过 spring 的事件框架发布事件
+        eventPublisher.publishEvent(new DemoEvent(id));
+    }
+}
+```
+
+## eventframework-console 使用
+启动事件框架控制台：
+```bahs
+java -Dons.client.logRoot=/var/eventframework_console/logs \
+    -Drocketmq.client.logUseSlf4j=true \
+    -Dorange.eventframework.nameSrvAddr=localhost:9876 \
+    -jar /var/eventframework_console/eventframework-console.jar \
+    --elastic.search.nodes=localhost:9300
+```
+
+访问：`http://localhost:8080/index.htm`
 
 # 配置参数说明
 支持以下三种方式配置参数，优先级高的配置会覆盖优先级低的配置：
