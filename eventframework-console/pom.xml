@@ -6,7 +6,7 @@
 
     <groupId>com.orange.server</groupId>
     <artifactId>eventframework-console</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -26,27 +26,15 @@
 
         <spring-boot.version>2.1.7.RELEASE</spring-boot.version>
         <log4j.version>2.11.1</log4j.version>
+        <elasticsearch.version>7.4.0</elasticsearch.version>
 
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <!-- Spring Boot -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <version>${spring-boot.version}</version>
             <exclusions>
                 <!-- 排除默认的 log 组件 -->
                 <exclusion>
@@ -60,6 +48,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
+            <version>${spring-boot.version}</version>
         </dependency>
 
         <dependency>
@@ -112,6 +101,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-freemarker</artifactId>
+            <version>${spring-boot.version}</version>
         </dependency>
 
         <dependency>
@@ -128,7 +118,7 @@
         <dependency>
             <groupId>com.orange.server</groupId>
             <artifactId>eventframework-client</artifactId>
-            <version>0.4.0-SNAPSHOT</version>
+            <version>1.0.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>
@@ -139,7 +129,7 @@
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>elasticsearch-rest-high-level-client</artifactId>
-            <version>7.4.0</version>
+            <version>${elasticsearch.version}</version>
         </dependency>
     </dependencies>
 
@@ -164,6 +154,7 @@
                 <dependency>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-devtools</artifactId>
+                    <version>${spring-boot.version}</version>
                     <optional>true</optional>
                 </dependency>
             </dependencies>

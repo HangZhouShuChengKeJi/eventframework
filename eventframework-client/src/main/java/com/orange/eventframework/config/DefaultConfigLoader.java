@@ -135,9 +135,8 @@ public class DefaultConfigLoader implements ConfigLoader{
         while (enumeration.hasMoreElements()) {
             String key = (String) enumeration.nextElement();
             if (isKeyMatch(key)) {
-                continue;
+                settingsMap.put(key, properties.getProperty(key));
             }
-            settingsMap.put(key, properties.getProperty(key));
         }
     }
 
@@ -148,9 +147,8 @@ public class DefaultConfigLoader implements ConfigLoader{
         Map<String, String> env = System.getenv();
         for (Map.Entry<String, String> entry : env.entrySet()) {
             if (isKeyMatch(entry.getKey())) {
-                continue;
+                settingsMap.put(entry.getKey(), entry.getValue());
             }
-            settingsMap.put(entry.getKey(), entry.getValue());
         }
     }
 

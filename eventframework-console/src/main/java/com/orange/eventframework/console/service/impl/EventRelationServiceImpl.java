@@ -54,7 +54,7 @@ public class EventRelationServiceImpl implements EventRelationService {
     public boolean save(EventRelation eventRelation) {
         String eventRelationJson = JSON.toJSONString(eventRelation);
         try {
-            IndexResponse response = esClient.index(new IndexRequest(eventIndex).source(eventRelationJson, XContentType.JSON).id(DigestUtils.md5Hex(eventRelationJson)), RequestOptions.DEFAULT);
+            IndexResponse response = esClient.index(new IndexRequest(eventRelationIndex).source(eventRelationJson, XContentType.JSON).id(DigestUtils.md5Hex(eventRelationJson)), RequestOptions.DEFAULT);
             switch (response.getResult()) {
                 case CREATED:
                 case UPDATED:
