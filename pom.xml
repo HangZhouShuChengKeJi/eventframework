@@ -6,7 +6,7 @@
 
     <groupId>com.orange.server</groupId>
     <artifactId>eventframework</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
