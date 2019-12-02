@@ -15,7 +15,8 @@
             <AppenderRef ref="Console" />
         </Root>
 
-        <logger name="com.orange.eventframework.console" level="DEBUG" />
+        <logger name="com.orange.eventframework" level="INFO" />
+        <logger name="com.orange.eventframework.console" level="INFO" />
 
         <!-- rocketmq client 日志 -->
         <logger name="RocketmqClient" level="WARN" />

@@ -64,22 +64,22 @@ public final class EventFramework {
         logger.debug("EventFramework check config ...");
         checkConfig(this.config);
 
-        logger.info("appName: \t\t{}", config.getAppName());
-        logger.info("disabled: \t\t{}", config.isDisabled());
-        logger.info("topic: \t\t{}", config.getTopic());
-        logger.info("groupId: \t\t{}", config.getGroupId());
-        logger.info("nameSrvAddr: \t\t{}", config.getNameSrvAddr());
-        logger.info("defaultDataTopic: \t\t{}", config.getDefaultDataTopic());
-        logger.info("defaultProducerCode: \t\t{}", config.getDefaultProducerCode());
-        logger.info("maxReconsumeTimes: \t\t{}", config.getMaxReconsumeTimes());
-        logger.info("consumeThreadMin: \t\t{}", config.getConsumeThreadMin());
-        logger.info("consumeThreadMax: \t\t{}", config.getConsumeThreadMax());
-        logger.info("pullBatchSize: \t\t{}", config.getPullBatchSize());
-        logger.info("sendMsgTimeout: \t\t{}", config.getSendMsgTimeout());
-        logger.info("retryTimesWhenSendFailed: \t\t{}", config.getRetryTimesWhenSendFailed());
-        logger.info("retryTimesWhenSendAsyncFailed: \t\t{}", config.getRetryTimesWhenSendAsyncFailed());
-        logger.info("retryAnotherBrokerWhenNotStoreOK: \t\t{}", config.isRetryAnotherBrokerWhenNotStoreOK());
-        logger.info("clientIP: \t\t{}", config.getClientIP());
+        logger.info("appName:          {}", config.getAppName());
+        logger.info("disabled:         {}", config.isDisabled());
+        logger.info("topic:            {}", config.getTopic());
+        logger.info("groupId:          {}", config.getGroupId());
+        logger.info("nameSrvAddr:      {}", config.getNameSrvAddr());
+        logger.info("defaultDataTopic:         {}", config.getDefaultDataTopic());
+        logger.info("defaultProducerCode:      {}", config.getDefaultProducerCode());
+        logger.info("maxReconsumeTimes:        {}", config.getMaxReconsumeTimes());
+        logger.info("consumeThreadMin:         {}", config.getConsumeThreadMin());
+        logger.info("consumeThreadMax:         {}", config.getConsumeThreadMax());
+        logger.info("pullBatchSize:            {}", config.getPullBatchSize());
+        logger.info("sendMsgTimeout:           {}", config.getSendMsgTimeout());
+        logger.info("retryTimesWhenSendFailed:              {}", config.getRetryTimesWhenSendFailed());
+        logger.info("retryTimesWhenSendAsyncFailed:         {}", config.getRetryTimesWhenSendAsyncFailed());
+        logger.info("retryAnotherBrokerWhenNotStoreOK:      {}", config.isRetryAnotherBrokerWhenNotStoreOK());
+        logger.info("clientIP:     {}", config.getClientIP());
 
         // 启动
         logger.debug("EventFramework bootstrap ...");
