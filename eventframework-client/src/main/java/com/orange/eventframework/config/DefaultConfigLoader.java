@@ -112,6 +112,8 @@ public class DefaultConfigLoader implements ConfigLoader{
             config.setRetryAnotherBrokerWhenNotStoreOK(Boolean.parseBoolean(settingsMap.get("orange.eventframework.retryAnotherBrokerWhenNotStoreOK")));
         }
 
+        config.setClientIP(System.getProperty("ef.host.ip", System.getenv("EF_HOST_IP")));
+
         if (config.getClientIP() == null) {
             config.setClientIP(NetworkUtil.getLocalIP());
         }

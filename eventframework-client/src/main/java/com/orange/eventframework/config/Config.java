@@ -71,7 +71,7 @@ public class Config {
     /**
      * 客户端 IP
      */
-    private String  clientIP                         = System.getProperty("ef.host.ip", System.getenv("EF_HOST_IP"));
+    private String  clientIP                         = null;
 
 
     public Config() {
