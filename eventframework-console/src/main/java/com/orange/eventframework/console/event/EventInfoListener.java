@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Random;
 
 /**
  * 事件信息监听器
@@ -44,6 +45,8 @@ public class EventInfoListener implements MessageListenerConcurrently, SmartLife
 
     @Resource(name = "eventFrameworkConfig")
     private Config eventFrameworkConfig;
+
+    private Random random;
 
     @Override
     public void start() {
@@ -70,6 +73,8 @@ public class EventInfoListener implements MessageListenerConcurrently, SmartLife
         } catch (MQClientException e) {
             throw new IllegalStateException(e);
         }
+
+        this.random = new Random();
     }
 
     @Override
@@ -104,6 +109,11 @@ public class EventInfoListener implements MessageListenerConcurrently, SmartLife
     @Override
     public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
         for (MessageExt msg : msgs) {
+            // 抽样处理
+            if (this.random.nextInt(20) != 0) {
+                continue;
+            }
+
             EventRelation eventRelation = null;
             try {
                 String body = new String(msg.getBody(), StandardCharsets.UTF_8);
