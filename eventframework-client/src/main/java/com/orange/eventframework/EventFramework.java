@@ -8,6 +8,8 @@ import org.apache.rocketmq.common.message.MessageExt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
+
 /**
  * 事件框架
  *
@@ -139,8 +141,8 @@ public final class EventFramework {
         this.eventInfoProducer.uploadProduceEventInfo(event, producerCode, msgId, message);
     }
 
-    void uploadConsumeEventInfo(MessageExt message, String consumerCode, String consumeEventCode) {
-        this.eventInfoProducer.uploadConsumeEventInfo(message, consumerCode, consumeEventCode);
+    void uploadConsumeEventInfo(MessageExt message, String consumerCode, String consumeEventCode, Date consumeStartTime) {
+        this.eventInfoProducer.uploadConsumeEventInfo(message, consumerCode, consumeEventCode, consumeStartTime);
     }
 
 

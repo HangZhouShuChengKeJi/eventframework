@@ -20,6 +20,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -274,6 +275,7 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
         // 初始化为 消费成功
         ConsumeConcurrentlyStatus status = ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
         for (MessageExt message : msgs) {
+            Date consumeStartTime = new Date();
             try {
                 EventContext.setCurrentMessage(message);
                 if (status != ConsumeConcurrentlyStatus.RECONSUME_LATER && consumeMessage(new RocketMqMessageWrapper(message)) == ConsumeStatus.RECONSUME_LATER) {
@@ -295,7 +297,7 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
             } finally {
                 // 上传事件信息
                 if (!this.disableEventInfoReport) {
-                    this.eventFramework.uploadConsumeEventInfo(message, consumerCode, message.getTags());
+                    this.eventFramework.uploadConsumeEventInfo(message, consumerCode, message.getTags(), consumeStartTime);
                 }
             }
         }

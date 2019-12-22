@@ -13,6 +13,8 @@ import org.apache.rocketmq.common.message.MessageExt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
+
 /**
  * 事件框架专用的生产者。用于上传事件信息采集数据
  *
@@ -54,11 +56,14 @@ class EventInfoProducer {
         this.efProducer.shutdown();
     }
 
-    void uploadConsumeEventInfo(MessageExt message, String consumerCode, String consumeEventCode) {
+    void uploadConsumeEventInfo(MessageExt message, String consumerCode, String consumeEventCode, Date consumeStartTime) {
         ConsumeEventInfo eventInfo = new ConsumeEventInfo(message.getMsgId(), message.getTopic(), message.getTags(), message.getKeys());
 
         eventInfo.setConsumerCode(consumerCode);
         eventInfo.setEventCode(consumeEventCode);
+        eventInfo.setCreateTime(new Date());
+        eventInfo.setConsumeStartTime(consumeStartTime);
+        eventInfo.setConsumeEndTime(eventInfo.getCreateTime());
 
         Message msg = new Message(config.getTopic(), Constants.EVENT_INFO_CONSUME, message.getMsgId(), JSON.toJSONBytes(eventInfo));
 
@@ -87,6 +92,7 @@ class EventInfoProducer {
 
         eventInfo.setEventCode(event.getEventCode());
         eventInfo.setProducerCode(producerCode);
+        eventInfo.setCreateTime(new Date());
 
         eventInfo.setAppName(config.getAppName());
 

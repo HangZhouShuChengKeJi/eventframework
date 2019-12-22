@@ -70,7 +70,7 @@ public class EventRelationServiceImpl implements EventRelationService {
     @Override
     public boolean save(ProduceEventInfo eventInfo) {
         try {
-            IndexResponse response = esClient.index(new IndexRequest(eventIndex).source(JSON.toJSONString(eventInfo), XContentType.JSON), RequestOptions.DEFAULT);
+            IndexResponse response = esClient.index(new IndexRequest(eventIndex).source(JSON.toJSONStringWithDateFormat(eventInfo, "yyyy-MM-dd'T'HH:mm:ss.SSSZ"), XContentType.JSON), RequestOptions.DEFAULT);
             switch (response.getResult()) {
                 case CREATED:
                 case UPDATED:
@@ -86,7 +86,7 @@ public class EventRelationServiceImpl implements EventRelationService {
     @Override
     public boolean save(ConsumeEventInfo eventInfo) {
         try {
-            IndexResponse response = esClient.index(new IndexRequest(eventIndex).source(JSON.toJSONString(eventInfo), XContentType.JSON), RequestOptions.DEFAULT);
+            IndexResponse response = esClient.index(new IndexRequest(eventIndex).source(JSON.toJSONStringWithDateFormat(eventInfo, "yyyy-MM-dd'T'HH:mm:ss.SSSZ"), XContentType.JSON), RequestOptions.DEFAULT);
             switch (response.getResult()) {
                 case CREATED:
                 case UPDATED:

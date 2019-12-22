@@ -1,6 +1,7 @@
 package com.orange.eventframework.eventinfo;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 事件信息定义
@@ -9,7 +10,6 @@ import java.io.Serializable;
  * @date 2019/3/13 10:24
  */
 public class EventInfo implements Serializable {
-
 
     private String msgId;
     private String topic;
@@ -27,6 +27,10 @@ public class EventInfo implements Serializable {
      * 应用名称
      */
     private String appName;
+    /**
+     * 创建时间
+     */
+    private Date   createTime;
 
     public EventInfo() {
     }
@@ -92,5 +96,13 @@ public class EventInfo implements Serializable {
 
     public void setAppName(String appName) {
         this.appName = appName;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 }
