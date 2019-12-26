@@ -140,18 +140,6 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-            <build>
-                <resources>
-                    <resource>
-                        <directory>src/main/resources</directory>
-                        <!-- 资源根目录排除各环境的配置，使用单独的资源目录来指定 -->
-                        <excludes>
-                            <exclude>res_online/*</exclude>
-                            <exclude>res_test/*</exclude>
-                        </excludes>
-                    </resource>
-                </resources>
-            </build>
             <dependencies>
                 <dependency>
                     <groupId>org.springframework.boot</groupId>
@@ -160,22 +148,6 @@
                     <optional>true</optional>
                 </dependency>
             </dependencies>
-        </profile>
-        <profile>
-            <id>online</id>
-            <build>
-                <resources>
-                    <resource>
-                        <directory>src/main/resources</directory>
-                        <excludes>
-                            <exclude>res_online/*</exclude>
-                        </excludes>
-                    </resource>
-                    <resource>
-                        <directory>src/main/resources/res_online</directory>
-                    </resource>
-                </resources>
-            </build>
         </profile>
     </profiles>
 
