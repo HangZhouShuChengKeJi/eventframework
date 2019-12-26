@@ -37,18 +37,11 @@ public class EventRelationServiceImpl implements EventRelationService {
 
     @Resource
     private RestHighLevelClient esClient;
-
     @Value("${eventframework.elastic.event.index}")
-    public String eventIndex;
-
-    @Value("${eventframework.elastic.event.type}")
-    public String eventType;
-
+    public  String              eventIndex;
     @Value("${eventframework.elastic.event_relation.index}")
-    private String eventRelationIndex;
+    private String              eventRelationIndex;
 
-    @Value("${eventframework.elastic.event_relation.type}")
-    private String eventRelationType;
 
     @Override
     public boolean save(EventRelation eventRelation) {
@@ -100,7 +93,7 @@ public class EventRelationServiceImpl implements EventRelationService {
     }
 
     @Override
-    public List<EventRelation> listAll() {
+    public List<EventRelation> listAllRelations() {
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(QueryBuilders.existsQuery("eventCode"));

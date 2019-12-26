@@ -145,5 +145,9 @@ public final class EventFramework {
         this.eventInfoProducer.uploadConsumeEventInfo(message, consumerCode, consumeEventCode, consumeStartTime);
     }
 
+    void uploadConsumeDisplayName(AbstractMQEventListener listener) {
+        this.eventInfoProducer.uploadConsumeDisplayName(listener);
+    }
+
 
 }

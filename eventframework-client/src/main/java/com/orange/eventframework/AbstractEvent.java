@@ -25,6 +25,12 @@ public abstract class AbstractEvent extends ApplicationEvent implements Serializ
         return this.getClass().getName();
     }
 
+
+    /**
+     * 给该事件加一个方便理解的名称,便于控制台显示直观
+     */
+    public abstract String getDisplayName();
+
     /**
      * 是否发布到MQ
      */

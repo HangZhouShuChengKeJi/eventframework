@@ -3,9 +3,13 @@ package com.orange.eventframework.console.event;
 import com.alibaba.fastjson.JSON;
 import com.orange.eventframework.Constants;
 import com.orange.eventframework.config.Config;
+import com.orange.eventframework.console.common.constant.EventRoleConstant;
+import com.orange.eventframework.console.dal.entity.EventNameAlias;
 import com.orange.eventframework.console.entity.EventRelation;
+import com.orange.eventframework.console.service.EventAliasService;
 import com.orange.eventframework.console.service.EventRelationService;
 import com.orange.eventframework.eventinfo.ConsumeEventInfo;
+import com.orange.eventframework.eventinfo.EventName;
 import com.orange.eventframework.eventinfo.ProduceEventInfo;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
@@ -36,15 +40,14 @@ public class EventInfoListener implements MessageListenerConcurrently, SmartLife
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     private DefaultMQPushConsumer consumer;
-
     @Value("${eventframework.console.rocketmq.consumer.groupId}")
-    public String consumerGroupId;
-
+    public  String                consumerGroupId;
     @Resource
-    private EventRelationService eventRelationService;
-
+    private EventRelationService  eventRelationService;
+    @Resource
+    private EventAliasService     eventAliasService;
     @Resource(name = "eventFrameworkConfig")
-    private Config eventFrameworkConfig;
+    private Config                eventFrameworkConfig;
 
     private Random random;
 
@@ -110,9 +113,9 @@ public class EventInfoListener implements MessageListenerConcurrently, SmartLife
     public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
         for (MessageExt msg : msgs) {
             // 抽样处理
-            if (this.random.nextInt(20) != 0) {
-                continue;
-            }
+//            if (this.random.nextInt(20) != 0) {
+//                continue;
+//            }
 
             EventRelation eventRelation = null;
             try {
@@ -137,6 +140,9 @@ public class EventInfoListener implements MessageListenerConcurrently, SmartLife
 
                     // 创建事件关系
                     eventRelation = new EventRelation(eventInfo);
+                } else if (Constants.EVENT_DISPLAY_NAME.equals(msg.getTags())) {
+
+                    updateDisplayName(body);
                 } else {
                     continue;
                 }
@@ -152,6 +158,41 @@ public class EventInfoListener implements MessageListenerConcurrently, SmartLife
             eventRelationService.save(eventRelation);
         }
         return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+    }
+
+
+    /**
+     * 更新错题
+     */
+    private void updateDisplayName(String body) {
+        EventName eventName = JSON.parseObject(body, EventName.class);
+
+        EventNameAlias alias;
+        String displayName;
+        String code;
+        EventRoleConstant role;
+        if (eventName.getConsumerCode() != null) {
+            displayName = eventName.getConsumerDisplayName();
+            code = eventName.getConsumerCode();
+            role = EventRoleConstant.CONSUMER_ROLE;
+        } else {
+            displayName = eventName.getEventDisplayName();
+            code = eventName.getEventCode();
+            role = EventRoleConstant.EVENT_ROLE;
+        }
+
+        alias = eventAliasService.getAlias(code, role.getValue());
+
+        if (alias != null) {
+            alias.setDisplayName(displayName);
+            eventAliasService.save(alias);
+        } else {
+            EventNameAlias a = new EventNameAlias();
+            a.setDisplayName(displayName);
+            a.setCode(code);
+            a.setRole(role.getValue());
+            eventAliasService.save(a);
+        }
     }
 
 }

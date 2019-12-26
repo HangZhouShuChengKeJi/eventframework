@@ -18,5 +18,7 @@ public interface EventRelationService {
 
     boolean save(ConsumeEventInfo eventInfo);
 
-    List<EventRelation> listAll();
+    List<EventRelation> listAllRelations();
+
+
 }

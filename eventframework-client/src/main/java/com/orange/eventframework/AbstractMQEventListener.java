@@ -14,16 +14,15 @@ import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.SmartLifecycle;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -32,7 +31,7 @@ import java.util.stream.Collectors;
  * @author 小天
  * @date 2019/3/13 10:26
  */
-public abstract class AbstractMQEventListener implements MessageListenerConcurrently, SmartLifecycle {
+public abstract class AbstractMQEventListener implements MessageListenerConcurrently, SmartLifecycle, ApplicationListener {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -68,12 +67,17 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
      * 每批次最大拉取数量
      */
     private Integer     pullBatchSize;
+    /**
+     * 消费端的显示名字
+     */
+    private String      displayName;
 
     private EventFramework eventFramework;
 
     private DefaultMQPushConsumer dataConsumer;
 
     private volatile boolean isRunning = false;
+
 
     /**
      * 是否禁用事件信息报告
@@ -314,4 +318,21 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
      */
     public abstract ConsumeStatus consumeMessage(MessageWrapper message);
 
+
+    public abstract String getDisplayName();
+
+
+    @Override
+    public void onApplicationEvent(ApplicationEvent event) {
+        if (event instanceof ContextRefreshedEvent) {
+            if (!this.disableEventInfoReport) {
+                this.eventFramework.uploadConsumeDisplayName(this);
+            }
+        }
+    }
+
+
+    public String getConsumerCode() {
+        return consumerCode;
+    }
 }
