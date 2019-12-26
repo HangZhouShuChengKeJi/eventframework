@@ -15,7 +15,6 @@ import org.apache.rocketmq.common.message.MessageExt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.AbstractList;
 import java.util.Date;
 import java.util.Set;
 
@@ -171,7 +170,7 @@ class EventInfoProducer {
     void uploadConsumeDisplayName(AbstractMQEventListener listener) {
 
         EventName eventName = new EventName(listener);
-        Message msg = new Message(this.config.getTopic(), Constants.EVENT_DISPLAY_NAME, listener.toString(), JSON.toJSONBytes(eventName));
+        Message msg = new Message(this.config.getTopic(), Constants.EVENT_DISPLAY_NAME, listener.getClass().getName(), JSON.toJSONBytes(eventName));
 
         try {
             // 采用异步上传
