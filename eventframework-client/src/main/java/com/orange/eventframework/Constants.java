@@ -14,6 +14,6 @@ public class Constants {
     /**
      * 更新消息名字显示的消息
      */
-    public static final String EVENT_DISPLAY_NAME = "EVENT_DISPLAYNAME";
+    public static final String EVENT_DISPLAY_NAME = "EVENT_DISPLAY_NAME";
 
 }

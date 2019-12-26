@@ -112,10 +112,11 @@ public class EventInfoListener implements MessageListenerConcurrently, SmartLife
     @Override
     public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
         for (MessageExt msg : msgs) {
-            // 抽样处理
-//            if (this.random.nextInt(20) != 0) {
-//                continue;
-//            }
+
+            // 抽样处理，display_name 不能被抽样
+            if (this.random.nextInt(20) != 0 && !Constants.EVENT_DISPLAY_NAME.equals(msg.getTags())) {
+                continue;
+            }
 
             EventRelation eventRelation = null;
             try {

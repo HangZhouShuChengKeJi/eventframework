@@ -326,7 +326,7 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
     public void onApplicationEvent(ApplicationEvent event) {
         if (event instanceof ContextRefreshedEvent) {
             if (!this.disableEventInfoReport) {
-                this.eventFramework.uploadConsumeDisplayName(this);
+                this.eventFramework.uploadConsumerDisplayName(this);
             }
         }
     }
