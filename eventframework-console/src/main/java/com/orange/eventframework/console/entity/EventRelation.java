@@ -28,8 +28,8 @@ public class EventRelation implements Serializable {
         this.eventCode = eventInfo.getEventCode();
         this.producerCode = eventInfo.getProducerCode();
 
-        this.sourceConsumerCode = eventInfo.getSourceConsumeCode();
         this.sourceEventCode = eventInfo.getSourceEventCode();
+        this.sourceConsumerCode = eventInfo.getSourceConsumeCode();
     }
     public EventRelation(ConsumeEventInfo eventInfo) {
         this.appName= eventInfo.getAppName();
@@ -83,5 +83,17 @@ public class EventRelation implements Serializable {
 
     public void setSourceEventCode(String sourceEventCode) {
         this.sourceEventCode = sourceEventCode;
+    }
+
+    @Override
+    public String toString() {
+        return "EventRelation{" +
+                "appName='" + appName + '\'' +
+                ", eventCode='" + eventCode + '\'' +
+                ", producerCode='" + producerCode + '\'' +
+                ", consumerCode='" + consumerCode + '\'' +
+                ", sourceConsumerCode='" + sourceConsumerCode + '\'' +
+                ", sourceEventCode='" + sourceEventCode + '\'' +
+                '}';
     }
 }

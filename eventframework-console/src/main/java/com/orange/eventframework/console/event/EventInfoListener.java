@@ -1,6 +1,8 @@
 package com.orange.eventframework.console.event;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.orange.eventframework.Constants;
 import com.orange.eventframework.config.Config;
 import com.orange.eventframework.console.common.constant.EventRoleConstant;
@@ -11,6 +13,8 @@ import com.orange.eventframework.console.service.EventRelationService;
 import com.orange.eventframework.eventinfo.ConsumeEventInfo;
 import com.orange.eventframework.eventinfo.EventName;
 import com.orange.eventframework.eventinfo.ProduceEventInfo;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
@@ -50,6 +54,16 @@ public class EventInfoListener implements MessageListenerConcurrently, SmartLife
     private Config                eventFrameworkConfig;
 
     private Random random;
+
+    private Cache<String, EventRelation> eventInfoCache = CacheBuilder.newBuilder()
+                                                                      .maximumSize(100)
+                                                                      .concurrencyLevel(20)
+                                                                      .build();
+
+    private Cache<String, EventNameAlias> eventNameCache = CacheBuilder.newBuilder()
+                                                                      .maximumSize(100)
+                                                                      .concurrencyLevel(20)
+                                                                      .build();
 
     @Override
     public void start() {
@@ -118,7 +132,6 @@ public class EventInfoListener implements MessageListenerConcurrently, SmartLife
                 continue;
             }
 
-            EventRelation eventRelation = null;
             try {
                 String body = new String(msg.getBody(), StandardCharsets.UTF_8);
 
@@ -131,36 +144,48 @@ public class EventInfoListener implements MessageListenerConcurrently, SmartLife
                     // 保存事件信息
                     eventRelationService.save(eventInfo);
 
-                    // 创建事件关系
-                    eventRelation = new EventRelation(eventInfo);
+                    // 保存事件关系
+                    saveEventRelation(new EventRelation(eventInfo));
                 } else if (Constants.EVENT_INFO_CONSUME.equals(msg.getTags())) {
                     ConsumeEventInfo eventInfo = JSON.parseObject(msg.getBody(), ConsumeEventInfo.class);
 
                     // 保存事件信息
                     eventRelationService.save(eventInfo);
 
-                    // 创建事件关系
-                    eventRelation = new EventRelation(eventInfo);
+                    // 保存事件关系
+                    saveEventRelation(new EventRelation(eventInfo));
                 } else if (Constants.EVENT_DISPLAY_NAME.equals(msg.getTags())) {
-
+                    // 修改显示名称
                     updateDisplayName(body);
+                    continue;
                 } else {
                     continue;
                 }
-
-                if (logger.isDebugEnabled()) {
-                    logger.debug("监听到事件关系： {}", JSON.toJSONString(eventRelation));
-                }
-
-                // 保存事件关系
             } catch (Exception e) {
                 logger.error("", e);
             }
-            eventRelationService.save(eventRelation);
         }
         return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
     }
 
+    /**
+     * 保存事件关系
+     *
+     * @param eventRelation
+     */
+    private void saveEventRelation(EventRelation eventRelation) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("监听到事件关系： {}", JSON.toJSONString(eventRelation));
+        }
+
+        // 保存事件关系
+        String md5 = DigestUtils.md5Hex(eventRelation.toString());
+        // 通过缓存减少对 es 的重复写操作，减少压力（事件之间的关系很少改变）
+        if (eventInfoCache.getIfPresent(md5) == null) {
+            eventRelationService.save(eventRelation);
+            eventInfoCache.put(md5, eventRelation);
+        }
+    }
 
     /**
      * 更新错题
@@ -184,15 +209,20 @@ public class EventInfoListener implements MessageListenerConcurrently, SmartLife
 
         alias = eventAliasService.getAlias(code, role.getValue());
 
-        if (alias != null) {
+        if (alias == null) {
+            alias = new EventNameAlias();
             alias.setDisplayName(displayName);
-            eventAliasService.save(alias);
+            alias.setCode(code);
+            alias.setRole(role.getValue());
         } else {
-            EventNameAlias a = new EventNameAlias();
-            a.setDisplayName(displayName);
-            a.setCode(code);
-            a.setRole(role.getValue());
-            eventAliasService.save(a);
+            alias.setDisplayName(displayName);
+        }
+
+        String cacheKey = StringUtils.join(new String[]{alias.getCode(), alias.getDisplayName(), alias.getRole()}, "_");
+
+        if (eventNameCache.getIfPresent(cacheKey) == null) {
+            eventAliasService.save(alias);
+            eventNameCache.put(cacheKey, alias);
         }
     }
 
