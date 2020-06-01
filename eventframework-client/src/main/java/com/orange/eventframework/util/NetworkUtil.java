@@ -1,5 +1,6 @@
 package com.orange.eventframework.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,10 +18,15 @@ public class NetworkUtil {
 
     private static Logger logger = LoggerFactory.getLogger(NetworkUtil.class);
 
+    private final static String hostIp = System.getProperty("ef.host.ip", System.getenv("EF_HOST_IP"));
+
     /**
      * 获取本机第一块网卡IP
      */
     public static String getLocalIP() {
+        if (StringUtils.isNotBlank(hostIp)) {
+            return hostIp;
+        }
         String ip = "127.0.0.1";
         try {
             Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
