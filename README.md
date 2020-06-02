@@ -54,7 +54,7 @@ public class DemoEvent extends AbstractEvent {
 
     @Override
     public boolean enablePushToMQ() {
-        // true： 允许将该事件发送是的消息队列
+        // true： 允许将该事件发送到消息队列
         return true;
     }
 
@@ -77,6 +77,35 @@ public class DemoEventService {
     public void publishEvent(String id) {
         // 通过 spring 的事件框架发布事件
         eventPublisher.publishEvent(new DemoEvent(id));
+    }
+}
+```
+
+监听事件：
+```java
+public class DemoMQEventListener extends AbstractMQEventListener {
+
+    public DemoMQEventListener() {
+        super(new LinkedList<String>() {
+            {
+                // 事件类的名称作为事件标识
+                add(DemoEvent.class.getName());
+            }
+        });
+    }
+
+    @Override
+    public String getDisplayName() {
+        return "demo 事件监听器";
+    }
+
+    @Override
+    public ConsumeStatus consumeMessage(MessageWrapper messageWrapper) {
+        DemoEvent event = messageWrapper.getBody(DemoEvent.class);
+
+        // 事件处理逻辑
+
+        return ConsumeStatus.CONSUME_SUCCESS;
     }
 }
 ```

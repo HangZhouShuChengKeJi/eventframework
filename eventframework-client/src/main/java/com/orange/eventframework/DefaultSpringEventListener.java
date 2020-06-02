@@ -107,7 +107,6 @@ public class DefaultSpringEventListener implements SmartApplicationListener, Sma
         }
 
         if (StringUtils.isEmpty(this.producerCode)) {
-            // 如果未指定 nameSrvAddr, 则使用与框架相同的 nameSrvAddr
             this.producerCode = config.getDefaultProducerCode();
             logger.debug("使用事件框架默认的 producerCode：{}", this.producerCode);
         } else {
