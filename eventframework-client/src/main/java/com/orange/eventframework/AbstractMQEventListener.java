@@ -14,7 +14,6 @@ import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.SmartLifecycle;
@@ -31,7 +30,7 @@ import java.util.stream.Collectors;
  * @author 小天
  * @date 2019/3/13 10:26
  */
-public abstract class AbstractMQEventListener implements MessageListenerConcurrently, SmartLifecycle, ApplicationListener {
+public abstract class AbstractMQEventListener implements MessageListenerConcurrently, SmartLifecycle, ApplicationListener<ContextRefreshedEvent> {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -233,6 +232,7 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
      * 根据“事件标识”获取 topic
      *
      * @param eventCode 事件标识
+     *
      * @return topic
      */
     private String getTopic(String eventCode) {
@@ -314,6 +314,7 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
      * 消费信息
      *
      * @param message 消息 {@link MessageWrapper}
+     *
      * @return 消费结果 {@link ConsumeConcurrentlyStatus}
      */
     public abstract ConsumeStatus consumeMessage(MessageWrapper message);
@@ -323,12 +324,14 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
 
 
     @Override
-    public void onApplicationEvent(ApplicationEvent event) {
-        if (event instanceof ContextRefreshedEvent) {
-            if (!this.disableEventInfoReport) {
-                this.eventFramework.uploadConsumerDisplayName(this);
-            }
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        if (event.getApplicationContext().getParent() != null) {
+            return;
         }
+        if (this.disableEventInfoReport) {
+            return;
+        }
+        this.eventFramework.uploadConsumerDisplayName(this);
     }
 
 
