@@ -3,7 +3,7 @@
 
 # 使用
 ## eventframework-client 使用
-引入依赖：
+**引入依赖：**
 ```xml
 <dependency>
     <artifactId>eventframework-client</artifactId>
@@ -12,7 +12,7 @@
 </dependency>
 ```
 
-在 spring 容器中注册监听器：
+**注册监听器：**
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -36,7 +36,25 @@
 </beans>
 ```
 
-创建事件：
+**添加配置文件：**
+
+在 `resources` 目录下创建 `orange.eventframework.properties` 配置文件，内容如下：
+```ini
+# 应用名称（必填项）
+orange.eventframework.appName=default
+
+# 消息队列服务地址（必填项）
+orange.eventframework.nameSrvAddr=localhost:9876
+
+# 是否禁用事件框架（必填项）
+orange.eventframework.disabled=true
+
+# 业务数据默认生产者code，默认取 ${orange.eventframework.appName}
+# orange.eventframework.defaultProducerCode=ef_default_producer
+```
+> 更多配置选项参考“配置参数说明”
+
+**创建事件：**
 ```java
 /**
 * 通过继承 AbstractEvent 即可创建一个异步事件
@@ -66,7 +84,7 @@ public class DemoEvent extends AbstractEvent {
 }
 ```
 
-发布事件：
+**发布事件：**
 ```java
 @Service
 public class DemoEventService {
@@ -81,7 +99,7 @@ public class DemoEventService {
 }
 ```
 
-监听事件：
+**监听事件：**
 ```java
 public class DemoMQEventListener extends AbstractMQEventListener {
 
