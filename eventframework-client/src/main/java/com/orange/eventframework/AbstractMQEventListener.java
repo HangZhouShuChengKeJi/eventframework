@@ -14,6 +14,7 @@ import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.SmartLifecycle;
@@ -325,8 +326,29 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        if (event.getApplicationContext().getParent() != null) {
-            return;
+        ApplicationContext context = event.getApplicationContext();
+        ApplicationContext parentContext;
+        if ((parentContext = context.getParent()) != null) {
+            if(parentContext.getParent() != null) {
+                return;
+            }
+
+            /**
+             * spring cloud 启动时，会给 spring 的 root context 设置一个 id 为 "bootstrap" 的父级 context。
+             * 以下代码主要是兼容这种情况。
+             */
+
+            try {
+                Class.forName("org.springframework.cloud.bootstrap.BootstrapApplicationListener", false, getClass().getClassLoader());
+            } catch (ClassNotFoundException ignore) {
+                logger.debug("no spring cloud");
+                // 不存在 spring cloud 时，直接返回
+                return;
+            }
+
+            if(!"bootstrap".equals(parentContext.getId())) {
+                return;
+            }
         }
         if (this.disableEventInfoReport) {
             return;
