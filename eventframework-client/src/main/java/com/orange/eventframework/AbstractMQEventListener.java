@@ -339,10 +339,9 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
              */
 
             try {
+                // 通过检查 "org.springframework.cloud.bootstrap.BootstrapApplicationListener" 是否存在来判断是否为 spring cloud 项目
                 Class.forName("org.springframework.cloud.bootstrap.BootstrapApplicationListener", false, getClass().getClassLoader());
             } catch (ClassNotFoundException ignore) {
-                logger.debug("no spring cloud");
-                // 不存在 spring cloud 时，直接返回
                 return;
             }
 
