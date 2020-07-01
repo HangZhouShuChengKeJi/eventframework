@@ -25,7 +25,7 @@
         <maven.deploy.skip>true</maven.deploy.skip>
 
         <spring-boot.version>2.1.7.RELEASE</spring-boot.version>
-        <log4j.version>2.11.1</log4j.version>
+        <log4j.version>2.13.3</log4j.version>
         <elasticsearch.version>7.4.0</elasticsearch.version>
 
     </properties>
