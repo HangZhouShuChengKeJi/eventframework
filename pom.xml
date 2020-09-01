@@ -19,6 +19,11 @@
         <!-- 指定源代码的编码 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+        <!-- 该模块禁止 install 到本地 maven 仓库 -->
+        <maven.install.skip>true</maven.install.skip>
+        <!-- 该模块禁止部署到远程 maven 仓库 -->
+        <maven.deploy.skip>true</maven.deploy.skip>
+
         <spring.version>4.3.22.RELEASE</spring.version>
         <log4j.version>2.11.1</log4j.version>
 
