@@ -6,7 +6,7 @@
 
     <groupId>com.orange.server</groupId>
     <artifactId>eventframework-client</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.2.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -20,6 +20,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <spring.version>4.3.22.RELEASE</spring.version>
+        <rocketmq.version>4.7.1</rocketmq.version>
     </properties>
 
     <dependencies>
@@ -36,7 +37,7 @@
         <dependency>
             <groupId>org.apache.rocketmq</groupId>
             <artifactId>rocketmq-client</artifactId>
-            <version>4.4.0</version>
+            <version>${rocketmq.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

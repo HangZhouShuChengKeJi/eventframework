@@ -6,7 +6,7 @@
 
     <groupId>com.orange.server</groupId>
     <artifactId>eventframework-console</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.2.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
