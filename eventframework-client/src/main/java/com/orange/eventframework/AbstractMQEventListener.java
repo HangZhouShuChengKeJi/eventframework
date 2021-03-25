@@ -210,7 +210,7 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
                 this.realConsumerCode = this.consumerCode;
             } else {
                 // 拼接消费者标识前缀
-                this.realConsumerCode = this.consumerCode + this.consumerCode;
+                this.realConsumerCode = config.getConsumerCodePrefix() + this.consumerCode;
             }
         }
         logger.info("realConsumerCode：{}", this.realConsumerCode);
