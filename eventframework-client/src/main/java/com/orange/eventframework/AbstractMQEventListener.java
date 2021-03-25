@@ -154,8 +154,7 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
 
         this.eventFramework = EventFramework.getInstance();
         if (this.eventFramework.getConfig().isDisabled()) {
-            // 修改为禁用状态
-            this.disableEventInfoReport = true;
+            return;
         }
 
         // 获取全局配置
@@ -350,6 +349,9 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
             if(!"bootstrap".equals(parentContext.getId())) {
                 return;
             }
+        }
+        if (this.eventFramework.getConfig().isDisabled()) {
+            return;
         }
         if (this.disableEventInfoReport) {
             return;

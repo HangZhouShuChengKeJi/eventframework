@@ -83,6 +83,12 @@ public final class EventFramework {
         logger.info("retryAnotherBrokerWhenNotStoreOK:      {}", config.isRetryAnotherBrokerWhenNotStoreOK());
         logger.info("clientIP:     {}", config.getClientIP());
 
+        // 判断是否禁用
+        if (this.config.isDisabled()) {
+            logger.warn("EventFramework is disabled");
+            return;
+        }
+
         // 启动
         logger.debug("EventFramework bootstrap ...");
         bootstrap();
@@ -112,10 +118,6 @@ public final class EventFramework {
      * 启动
      */
     private void bootstrap() {
-        // 判断是否禁用
-        if (this.config.isDisabled()) {
-            return;
-        }
         // 初始化 事件框架 生产者
         this.eventInfoProducer = new EventInfoProducer();
         this.eventInfoProducer.init(this.config);
