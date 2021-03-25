@@ -34,8 +34,14 @@ public class Config {
     /**
      * 业务数据默认的 topic
      */
-    private String  defaultDataTopic                 = "ef_data";
-    private String  defaultProducerCode              = "ef_default_producer";
+    private String defaultDataTopic    = "ef_data";
+    private String defaultProducerCode = "ef_default_producer";
+
+    /**
+     * 消费者标识前缀
+     */
+    private String consumerCodePrefix = null;
+
     /**
      * 最大重试消费次数
      */
@@ -131,6 +137,14 @@ public class Config {
 
     public void setDefaultProducerCode(String defaultProducerCode) {
         this.defaultProducerCode = defaultProducerCode;
+    }
+
+    public String getConsumerCodePrefix() {
+        return consumerCodePrefix;
+    }
+
+    public void setConsumerCodePrefix(String consumerCodePrefix) {
+        this.consumerCodePrefix = consumerCodePrefix;
     }
 
     public int getMaxReconsumeTimes() {

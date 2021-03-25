@@ -85,6 +85,11 @@ public class DefaultConfigLoader implements ConfigLoader{
             config.setDefaultDataTopic(settingsMap.get("orange.eventframework.defaultDataTopic"));
         }
 
+        // 消费者标识前缀
+        if(settingsMap.containsKey("orange.eventframework.consumerCodePrefix")) {
+            config.setConsumerCodePrefix(settingsMap.get("orange.eventframework.consumerCodePrefix"));
+        }
+
         // 最大重试消费次数
         if(settingsMap.containsKey("orange.eventframework.maxReconsumeTimes")) {
             config.setMaxReconsumeTimes(Integer.parseInt(settingsMap.get("orange.eventframework.maxReconsumeTimes")));

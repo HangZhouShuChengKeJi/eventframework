@@ -8,7 +8,7 @@
 <dependency>
     <artifactId>eventframework-client</artifactId>
     <groupId>com.orange.server</groupId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.2.2-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -160,6 +160,9 @@ orange.eventframework.disabled=true
 
 # 业务数据默认生产者code，默认取 ${orange.eventframework.appName}
 # orange.eventframework.defaultProducerCode=ef_default_producer
+
+# 消费者标识前缀（根据需要调整）
+orange.eventframework.consumerCodePrefix=
 
 #### 以下参数，保持默认配置，请勿随意改动 #####
 

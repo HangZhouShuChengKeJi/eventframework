@@ -14,6 +14,7 @@ import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.MessageFormatter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
@@ -39,6 +40,10 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
      * 消息服务消费者标识
      */
     private String      consumerCode;
+    /**
+     * 消息服务消费者标识
+     */
+    private String      realConsumerCode;
     /**
      * 消息服务地址（默认与事件框架的地址相同）
      */
@@ -130,6 +135,10 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
         this.consumerCode = consumerCode;
     }
 
+    public void setRealConsumerCode(String realConsumerCode) {
+        this.realConsumerCode = realConsumerCode;
+    }
+
     public Integer getMaxReconsumeTimes() {
         return maxReconsumeTimes;
     }
@@ -196,7 +205,17 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
             logger.debug("指定了独立的 consumerCode：{}", this.consumerCode);
         }
 
-        this.dataConsumer = new DefaultMQPushConsumer(this.consumerCode);
+        if(this.realConsumerCode == null) {
+            if(StringUtils.isBlank(config.getConsumerCodePrefix())) {
+                this.realConsumerCode = this.consumerCode;
+            } else {
+                // 拼接消费者标识前缀
+                this.realConsumerCode = this.consumerCode + this.consumerCode;
+            }
+        }
+        logger.info("realConsumerCode：{}", this.realConsumerCode);
+
+        this.dataConsumer = new DefaultMQPushConsumer(this.realConsumerCode);
         this.dataConsumer.setNamesrvAddr(nameSrvAddr);
         // 设置实例名称
         this.dataConsumer.setInstanceName(config.getAppName());
@@ -219,12 +238,16 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
             }
         });
 
+
         this.dataConsumer.registerMessageListener(this);
 
         try {
             this.dataConsumer.start();
+            logger.info("消费者启动成功 | displayName={}, realConsumerCode={}", this.displayName, this.realConsumerCode);
         } catch (MQClientException e) {
-            throw new IllegalStateException(e);
+            logger.error(MessageFormatter.arrayFormat("消费者启动异常 | displayName={}, realConsumerCode={}",
+                    new Object[]{this.displayName, this.realConsumerCode}).getMessage(), e);
+            throw new RuntimeException(e);
         }
 
         this.isRunning = true;
