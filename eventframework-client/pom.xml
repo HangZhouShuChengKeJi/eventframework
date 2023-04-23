@@ -19,7 +19,7 @@
         <!-- 指定源代码的编码 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <spring.version>4.3.22.RELEASE</spring.version>
+        <spring.version>4.3.30.RELEASE</spring.version>
         <rocketmq.version>4.7.1</rocketmq.version>
     </properties>
 
@@ -39,6 +39,7 @@
             <artifactId>rocketmq-client</artifactId>
             <version>${rocketmq.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -52,7 +53,7 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.11</version>
+            <version>1.13</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -67,7 +68,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.70</version>
+            <version>1.2.83</version>
         </dependency>
     </dependencies>
 
