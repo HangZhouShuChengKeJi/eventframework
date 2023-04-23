@@ -164,6 +164,8 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
         this.eventFramework = EventFramework.getInstance();
         if (this.eventFramework.getConfig().isDisabled()) {
             return;
+        }if (this.eventFramework.getConfig().isDisableConsumer()) {
+            return;
         }
 
         // 获取全局配置
@@ -325,7 +327,8 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
                 eventPublisher.publishEvent(new ExceptionMonitorEvent(exceptionMonitorData));
             } finally {
                 // 上传事件信息
-                if (!this.disableEventInfoReport) {
+                if (!this.eventFramework.getConfig().isDisableUploadEventInfo()
+                        && !this.disableEventInfoReport) {
                     this.eventFramework.uploadConsumeEventInfo(message, consumerCode, message.getTags(), consumeStartTime);
                 }
             }
@@ -376,7 +379,8 @@ public abstract class AbstractMQEventListener implements MessageListenerConcurre
         if (this.eventFramework.getConfig().isDisabled()) {
             return;
         }
-        if (this.disableEventInfoReport) {
+        if (this.eventFramework.getConfig().isDisableUploadEventInfo()
+                || this.disableEventInfoReport) {
             return;
         }
         this.eventFramework.uploadConsumerDisplayName(this);

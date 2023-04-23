@@ -18,6 +18,20 @@ public class Config {
      * 框架禁用状态（仅禁用事件信息采集）
      */
     private boolean disabled    = true;
+
+    /**
+     * 禁用事件消费者（禁用后，将停止从 MQ 消费事件的行为）
+     */
+    private boolean disableConsumer    = false;
+    /**
+     * 禁用事件生产者（禁用后，将停止 spring 事件自动发布到 MQ 的行为）
+     */
+    private boolean disableProducer    = false;
+    /**
+     * 禁用上传事件信息
+     */
+    private boolean disableUploadEventInfo = true;
+
     /**
      * rocketmq 事件信息 topic
      */
@@ -97,6 +111,30 @@ public class Config {
 
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
+    }
+
+    public boolean isDisableConsumer() {
+        return disableConsumer;
+    }
+
+    public void setDisableConsumer(boolean disableConsumer) {
+        this.disableConsumer = disableConsumer;
+    }
+
+    public boolean isDisableProducer() {
+        return disableProducer;
+    }
+
+    public void setDisableProducer(boolean disableProducer) {
+        this.disableProducer = disableProducer;
+    }
+
+    public boolean isDisableUploadEventInfo() {
+        return disableUploadEventInfo;
+    }
+
+    public void setDisableUploadEventInfo(boolean disableUploadEventInfo) {
+        this.disableUploadEventInfo = disableUploadEventInfo;
     }
 
     public String getTopic() {

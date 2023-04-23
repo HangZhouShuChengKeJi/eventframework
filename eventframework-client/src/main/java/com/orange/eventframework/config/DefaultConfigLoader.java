@@ -67,7 +67,14 @@ public class DefaultConfigLoader implements ConfigLoader{
             }
         }
 
-        config.setDisabled(Boolean.parseBoolean(settingsMap.get("orange.eventframework.disabled")));
+        config.setDisabled(Boolean.parseBoolean(
+                settingsMap.getOrDefault("orange.eventframework.disabled", "false")));
+        config.setDisableConsumer(Boolean.parseBoolean(
+                settingsMap.getOrDefault("orange.eventframework.disableConsumer", "false")));
+        config.setDisableProducer(Boolean.parseBoolean(
+                settingsMap.getOrDefault("orange.eventframework.disableProducer", "false")));
+        config.setDisableUploadEventInfo(Boolean.parseBoolean(
+                settingsMap.getOrDefault("orange.eventframework.disableProducer", "true")));
 
         // 消息队列集群地址（必选）
         config.setNameSrvAddr(settingsMap.get("orange.eventframework.nameSrvAddr"));

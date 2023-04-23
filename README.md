@@ -157,6 +157,12 @@ orange.eventframework.nameSrvAddr=localhost:9876
 
 # 是否禁用事件框架（必填项）
 orange.eventframework.disabled=true
+# 是否禁用事件消费者，默认为： false
+orange.eventframework.disableConsumer=false
+# 是否禁用事件生产者，默认为： false
+orange.eventframework.disableProducer=false
+# 是否禁用上传事件信息，默认为： true
+orange.eventframework.disableUploadEventInfo=true
 
 # 业务数据默认生产者code，默认取 ${orange.eventframework.appName}
 # orange.eventframework.defaultProducerCode=ef_default_producer

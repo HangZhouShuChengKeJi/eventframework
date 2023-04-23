@@ -83,7 +83,7 @@ public class DefaultSpringEventListener implements SmartApplicationListener, Sma
 
         Config config = this.eventFramework.getConfig();
 
-        if (config.isDisabled()) {
+        if (config.isDisabled() || config.isDisableProducer()) {
             this.eventFramework = null;
             // 修改为禁用状态
             this.disableAutoPushToMQ = true;
@@ -223,7 +223,7 @@ public class DefaultSpringEventListener implements SmartApplicationListener, Sma
         try {
             SendResult sendResult = this.dataProducer.send(msg);
 
-            if (eventFramework != null) {
+            if (eventFramework != null && !eventFramework.getConfig().isDisableUploadEventInfo()) {
                 // 上报事件采集信息
                 this.eventFramework.uploadProduceEventInfo(event, this.producerCode, sendResult.getMsgId(), msg);
             }
