@@ -24,7 +24,7 @@
         <!-- 该模块禁止部署到远程 maven 仓库 -->
         <maven.deploy.skip>true</maven.deploy.skip>
 
-        <spring-boot.version>2.1.7.RELEASE</spring-boot.version>
+        <spring-boot.version>2.5.12</spring-boot.version>
         <log4j.version>2.13.3</log4j.version>
         <elasticsearch.version>7.4.0</elasticsearch.version>
 
